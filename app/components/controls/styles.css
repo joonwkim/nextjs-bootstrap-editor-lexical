@@ -1,0 +1,59 @@
+.btn-toolbar .divider{
+    width: 1px !important;
+    height: 30px;
+    background-color: #eee;
+    margin: 0 4px;
+}
+
+.btn-toolbar {
+    /* display: inline-block; */
+    cursor: not-allowed;
+}
+
+.btn-toolbar button:disabled {
+    pointer-events: none;
+    /* Ensures the button remains disabled */
+}
+.btn-outline-secondary.active,
+.btn-outline-secondary:active,
+.btn-outline-secondary:hover {
+    background-color: #e1e3e4;
+    /* Light color on hover */
+    border-color: #e1e3e4;
+    /* Optional: matching border color */
+    color: #000;
+    /* Text color on hover */
+}
+.editor-heading-h1 {
+    font-size: 1.75rem;
+    /* color: rgb(5, 5, 5); */
+    color: var(--bs-body-color) !important;
+    font-weight: 700;
+    margin: 0;
+    margin-bottom: 12px;
+    padding: 0;
+}
+
+.editor-heading-h2 {
+    font-size: 1.5rem;
+    /* color: rgb(65, 67, 70); */
+    color: var(--bs-body-color) !important;
+    font-weight: 400;
+    margin: 0;
+    margin-top: 10px;
+    padding: 0;
+    text-transform: uppercase;
+}
+.editor-heading-h3 {
+    font-size: 1.25rem;
+    color: var(--bs-body-color) !important;
+    /* color: rgb(49, 51, 53); */
+    font-weight: 300;
+    margin: 0;
+    margin-top: 10px;
+    padding: 0;
+    text-transform: uppercase;
+}
+.editor-paragraph{
+    font-size: 1rem;
+}
