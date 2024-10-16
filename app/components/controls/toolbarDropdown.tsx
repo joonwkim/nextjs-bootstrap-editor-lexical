@@ -1,28 +1,30 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DropdownItem } from '../data/toolbarData';
 
 interface ToolbarDropdownProps {
     dropdownItems?: DropdownItem[],
-    update: boolean;
     selectedItem: DropdownItem | undefined;
     updateSelectionChange?: boolean,
     handleDropdownSelect: (item: DropdownItem) => void,
 }
 
-const ToolbarDropdown = ({ dropdownItems, update, selectedItem, updateSelectionChange, handleDropdownSelect }: ToolbarDropdownProps) => {
-    const [canUpdate, setCanUpdate] = useState(update);
+const ToolbarDropdown = ({ dropdownItems, selectedItem, updateSelectionChange, handleDropdownSelect }: ToolbarDropdownProps) => {
+    const [selectedDropdown, setSelectedDropDown] = useState<DropdownItem | undefined>()
 
     useEffect(() => {
-        if (canUpdate && selectedItem) {
-            setCanUpdate(false);  // Stop further updates after initial set
+        if (selectedItem) {
+            setSelectedDropDown(selectedItem)
+        } else if (dropdownItems?.some(item => item.active === true)) {
+            setSelectedDropDown(dropdownItems?.find(item => item.active === true));
+        } else {
+            setSelectedDropDown(dropdownItems ? dropdownItems[0] : undefined)
         }
-    }, [selectedItem, canUpdate]);
+    }, [dropdownItems, selectedItem])
 
     const handleSelect = (item: DropdownItem) => {
         handleDropdownSelect(item);
-        setCanUpdate(false);
     };
 
     return (
@@ -30,7 +32,7 @@ const ToolbarDropdown = ({ dropdownItems, update, selectedItem, updateSelectionC
             <div className="btn-group" role="group">
                 {updateSelectionChange ? (
                     <button type="button" className="btn btn-outline-secondary dropdown-toggle border-0" data-bs-toggle="dropdown" aria-expanded="false" title="Options">
-                        <i className={`bi ${selectedItem?.icon} me-2`}></i>{selectedItem?.name}<i className='bi bi-chevron ms-2'></i>
+                        <i className={`bi ${selectedDropdown?.icon} me-2`}></i>{selectedDropdown?.name}<i className='bi bi-chevron ms-2'></i>
                     </button>
                 ) : (
                     <button type="button" className="btn btn-outline-secondary dropdown-toggle border-0" data-bs-toggle="dropdown" aria-expanded="false" title="Options">

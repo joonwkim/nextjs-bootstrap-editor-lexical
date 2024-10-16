@@ -5,12 +5,11 @@ import './styles.css'
 
 interface ToolbarProps {
     toolbarData: ToolbarItem[],
-    update: boolean;
     selectedItem: DropdownItem | undefined;
     handleToolbarSelect:(item:ToolbarItem) =>void,
 }
 
-const Toolbar = ({ toolbarData, update, selectedItem, handleToolbarSelect }: ToolbarProps) => {
+const Toolbar = ({ toolbarData, selectedItem, handleToolbarSelect }: ToolbarProps) => {
     
     // Track selected item
     return (
@@ -18,7 +17,7 @@ const Toolbar = ({ toolbarData, update, selectedItem, handleToolbarSelect }: Too
             {toolbarData.map((item: ToolbarItem, index: number) => (
                 <div key={index}>
                     {item.isDropdown ? (
-                        <ToolbarDropdown dropdownItems={item.dropdownItems} update={update} selectedItem={selectedItem}
+                        <ToolbarDropdown dropdownItems={item.dropdownItems} selectedItem={selectedItem}
                             updateSelectionChange={item.updateSelectionChange}
                             handleDropdownSelect={handleToolbarSelect} />
                     ) : (item.isDevider ? (<div className="divider"></div>) : (

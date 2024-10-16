@@ -38,7 +38,6 @@ const LexicalToolbar = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: L
     const [canUndo, setCanUndo] = useState(false);
     const [canRedo, setCanRedo] = useState(false);
     const [isLink, setIsLink] = useState(false);
-    const [canUpdateBlockType, setCanUpdateBlockType] = useState(false);
     const [selectedBlockType, setSelectedBlockType] = useState<DropdownItem | undefined>()
 
     console.log(isEditable)
@@ -49,7 +48,6 @@ const LexicalToolbar = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: L
         const updatedToolbarData = toolbarData.map(item => ({ ...item, dropdownItems: item.dropdownItems?.map(dropdown => dropdown.id === action ? { ...dropdown, active: true } : { ...dropdown, active: false }) }));
         console.log('dropdownItems: ',updatedToolbarData[4].dropdownItems);
 
-        setCanUpdateBlockType(true);
         const si = updatedToolbarData[4].dropdownItems?.find(item => item.id === action);
         if (si) {
             setSelectedBlockType(si)
@@ -423,7 +421,7 @@ const LexicalToolbar = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: L
     return (
         <div>
             {JSON.stringify(elementFormat, null, 2)}
-            <Toolbar toolbarData={toolbarData} handleToolbarSelect={handleToolbarSelect} update={canUpdateBlockType} selectedItem={selectedBlockType} />
+            <Toolbar toolbarData={toolbarData} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} />
         </div>
 
     )
