@@ -14,7 +14,7 @@ const ToolbarDropdown = ({ dropdownItems, selectedItem, updateSelectionChange, h
     const [selectedDropdown, setSelectedDropDown] = useState<DropdownItem | undefined>()
 
     useEffect(() => {
-        if (selectedItem) {
+        if (selectedItem && dropdownItems?.some(item => item.id === selectedItem.id)) {
             setSelectedDropDown(selectedItem)
         } else if (dropdownItems?.some(item => item.active === true)) {
             setSelectedDropDown(dropdownItems?.find(item => item.active === true));
