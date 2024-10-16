@@ -124,7 +124,7 @@
   right: 3px;
   padding: 3px;
   font-size: 10px;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   position: absolute;
   color: rgba(0, 0, 0, 0.5);
 }
@@ -187,7 +187,7 @@
   margin: 0;
   margin-top: 10px;
   padding: 0;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
 }
 
 .editor-quote {

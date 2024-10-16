@@ -42,7 +42,7 @@
     margin: 0;
     margin-top: 10px;
     padding: 0;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
 }
 .editor-heading-h3 {
     font-size: 1.25rem;
@@ -52,7 +52,7 @@
     margin: 0;
     margin-top: 10px;
     padding: 0;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
 }
 .editor-paragraph{
     font-size: 1rem;
