@@ -1,7 +1,7 @@
 'use client'
 import React, { Dispatch, useCallback, useEffect, useState } from 'react'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { getRichTextAction, RichTextAction, ToolbarItem } from '../../data/toolbarData';
+import { DropdownItem, getRichTextAction, RichTextAction, ToolbarItem } from '../../data/toolbarData';
 import Toolbar from '../../controls/toolbar';
 import { $createParagraphNode, $getSelection, $isElementNode, $isRangeSelection, $isRootOrShadowRoot, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_CRITICAL, COMMAND_PRIORITY_NORMAL, createCommand, ElementFormatType, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, KEY_MODIFIER_COMMAND, LexicalCommand, NodeKey, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from 'lexical';
 import { $findMatchingParent, $isEditorIsNestedEditor, $getNearestNodeOfType, mergeRegister } from '@lexical/utils'
@@ -38,10 +38,22 @@ const LexicalToolbar = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: L
     const [canUndo, setCanUndo] = useState(false);
     const [canRedo, setCanRedo] = useState(false);
     const [isLink, setIsLink] = useState(false);
+    const [canUpdateBlockType, setCanUpdateBlockType] = useState(false);
+    const [selectedBlockType, setSelectedBlockType] = useState<DropdownItem | undefined>()
+
+    console.log(isEditable)
+    console.log(canUndo)
+    console.log(canRedo)
 
     const $updateDropdownItemForBlockFormatItmes = useCallback((action: RichTextAction) => {
         const updatedToolbarData = toolbarData.map(item => ({ ...item, dropdownItems: item.dropdownItems?.map(dropdown => dropdown.id === action ? { ...dropdown, active: true } : { ...dropdown, active: false }) }));
         console.log('dropdownItems: ',updatedToolbarData[4].dropdownItems);
+
+        setCanUpdateBlockType(true);
+        const si = updatedToolbarData[4].dropdownItems?.find(item => item.id === action);
+        if (si) {
+            setSelectedBlockType(si)
+        }
 
         // setToolbarData(updatedToolbarData)
         // console.log('data.dropdownItems:', td.dropdownItems, 'action:', action)
@@ -411,7 +423,7 @@ const LexicalToolbar = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: L
     return (
         <div>
             {JSON.stringify(elementFormat, null, 2)}
-            <Toolbar toolbarData={toolbarData} handleToolbarSelect={handleToolbarSelect} />
+            <Toolbar toolbarData={toolbarData} handleToolbarSelect={handleToolbarSelect} update={canUpdateBlockType} selectedItem={selectedBlockType} />
         </div>
 
     )

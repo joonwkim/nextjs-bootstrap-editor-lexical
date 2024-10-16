@@ -5,20 +5,24 @@ import { DropdownItem } from '../data/toolbarData';
 
 interface ToolbarDropdownProps {
     dropdownItems?: DropdownItem[],
+    update: boolean;
+    selectedItem: DropdownItem | undefined;
     updateSelectionChange?: boolean,
     handleDropdownSelect: (item: DropdownItem) => void,
 }
 
-const ToolbarDropdown = ({ dropdownItems, updateSelectionChange, handleDropdownSelect }: ToolbarDropdownProps) => {
-    const [selected, setSelected] = useState<DropdownItem>();    
+const ToolbarDropdown = ({ dropdownItems, update, selectedItem, updateSelectionChange, handleDropdownSelect }: ToolbarDropdownProps) => {
+    const [canUpdate, setCanUpdate] = useState(update);
+
     useEffect(() => {
-        if (dropdownItems) {
-            setSelected(dropdownItems[0])
-        }       
-    }, [dropdownItems])
+        if (canUpdate && selectedItem) {
+            setCanUpdate(false);  // Stop further updates after initial set
+        }
+    }, [selectedItem, canUpdate]);
+
     const handleSelect = (item: DropdownItem) => {
         handleDropdownSelect(item);
-        setSelected(item);
+        setCanUpdate(false);
     };
 
     return (
@@ -26,7 +30,7 @@ const ToolbarDropdown = ({ dropdownItems, updateSelectionChange, handleDropdownS
             <div className="btn-group" role="group">
                 {updateSelectionChange ? (
                     <button type="button" className="btn btn-outline-secondary dropdown-toggle border-0" data-bs-toggle="dropdown" aria-expanded="false" title="Options">
-                        <i className={`bi ${selected?.icon} me-2`}></i>{selected?.name }<i className='bi bi-chevron ms-2'></i>
+                        <i className={`bi ${selectedItem?.icon} me-2`}></i>{selectedItem?.name}<i className='bi bi-chevron ms-2'></i>
                     </button>
                 ) : (
                     <button type="button" className="btn btn-outline-secondary dropdown-toggle border-0" data-bs-toggle="dropdown" aria-expanded="false" title="Options">
@@ -35,7 +39,7 @@ const ToolbarDropdown = ({ dropdownItems, updateSelectionChange, handleDropdownS
                 <ul className="dropdown-menu">
                     {dropdownItems?.map((item, index) => (
                         <li key={index} onClick={() => handleSelect(item)}>
-                            <a className={`dropdown-item${item.active ? ' active' : ''}`} href="#">
+                            <a className={`dropdown-item${item.active === true ? ' active' : ''}`} href="#">
                                 <i className={`bi ${item.icon}`}></i> {item.name}
                             </a>
                         </li>

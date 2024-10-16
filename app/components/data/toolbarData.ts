@@ -67,7 +67,7 @@ export interface ToolbarItem extends DropdownItem {
     isDropdown?: boolean;
     isDevider?: boolean,
     dropdownItems?: DropdownItem[],
-    updateSelectionChange?: boolean,
+    updateSelectionChange?: boolean,    
     resetDropdown?:boolean,
 }
 
