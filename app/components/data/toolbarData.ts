@@ -41,6 +41,11 @@ export enum RichTextAction {
     Number = 'number',
     Check = 'check',
     Quote = 'quote',
+    HR = 'hr',
+    Image = 'image',
+    InlineImage = 'inline-image',
+    Column = 'column',
+    YTVideo = 'ytVideo',
     BlockFormatItems = 'blockFormatItems'
 }
 
@@ -101,11 +106,11 @@ export const alignFormatItems: DropdownItem[] = [
     { name: '들여쓰기', icon: 'bi-text-indent-left', active: false },
 ];
 export const insertItems: DropdownItem[] = [
-    { name: '수평선', icon: 'bi-hr', active: true },
-    { name: '이미지', icon: 'bi-file-image', active: false },
-    { name: '인라인 이미지', icon: 'bi-file-image', active: false },
-    { name: '컬럼 레이아웃', icon: 'bi-layout-three-columns', active: false },
-    { name: '유튜비디오', icon: 'bi-youtube', active: false },   
+    { name: '수평선', icon: 'bi-hr', active: false, id: RichTextAction.HR },
+    { name: '이미지', icon: 'bi-file-image', active: false, id: RichTextAction.Image },
+    { name: '인라인 이미지', icon: 'bi-file-image', active: false, id: RichTextAction.InlineImage },
+    { name: '컬럼 레이아웃', icon: 'bi-layout-three-columns', active: false, id: RichTextAction.Column },
+    { name: '유튜비디오', icon: 'bi-youtube', active: false, id: RichTextAction.YTVideo },
 ];
 
 export const toolbarData: ToolbarItem[] = [

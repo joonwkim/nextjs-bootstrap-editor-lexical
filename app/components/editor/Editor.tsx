@@ -14,7 +14,9 @@ import { toolbarData } from '../data/toolbarData';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import ReadOnlyPlugin from './plugins/readOnlyPlugin';
 import { ListItemNode, ListNode, } from '@lexical/list';
+import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
 import './styles.css'
+import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 
 
 const Editor = () => {
@@ -26,7 +28,7 @@ const Editor = () => {
 
     const editorConfig = {
         namespace: 'React.js Lexical',
-        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode],
+        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode],
         editorState:null,
         onError(error: Error) {
             console.log('error: ', error)
@@ -61,11 +63,12 @@ const Editor = () => {
                             }
                             ErrorBoundary={LexicalErrorBoundary}
                         />
+                        <ReadOnlyPlugin isReadOnly={isReadOnly} /> 
                         <HistoryPlugin />
                         <AutoFocusPlugin />
                         <ListPlugin />
                         <CheckListPlugin />
-                        <ReadOnlyPlugin isReadOnly={isReadOnly} /> 
+                        <HorizontalRulePlugin />
                     </div>
                 </div>
             </LexicalComposer>

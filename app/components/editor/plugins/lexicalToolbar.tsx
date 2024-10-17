@@ -11,6 +11,7 @@ import { $isListNode, INSERT_CHECK_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, IN
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { getSelectedNode } from '../utils/getSelectedNode';
 import { sanitizeUrl } from '../utils/url';
+import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
 
 interface LexicalToolbarProps {
     isReadOnly: boolean,
@@ -25,7 +26,7 @@ const LexicalToolbar = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: L
     const [blockType, setBlockType] = useState<keyof typeof actionName>(RichTextAction.Paragraph);
     const [isRTL, setIsRTL] = useState(false);
     const [selectedElementKey, setSelectedElementKey] = useState<NodeKey | null>(null,);
-    const [selectedRichTextAction, setSelectedRichTextAction] = useState<RichTextAction | null>(null)
+    // const [selectedRichTextAction, setSelectedRichTextAction] = useState<RichTextAction | null>(null)
     const [elementFormat, setElementFormat] = useState<ElementFormatType>('left');
     const [isEditable, setIsEditable] = useState(() => editor.isEditable());
     const [canUndo, setCanUndo] = useState(false);
@@ -104,7 +105,7 @@ const LexicalToolbar = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: L
                 }
                 const action = getRichTextAction(type)
                 if (action) {
-                    setSelectedRichTextAction(action)
+                    // setSelectedRichTextAction(action)
                     $updateDropdownItemForBlockFormatItmes(action);
                     console.log('action: ', action)
                 }
@@ -252,13 +253,7 @@ const LexicalToolbar = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: L
     }, [activeEditor, isLink, setIsLinkEditMode]);
 
 
-    const handleToolbarSelect = (item: ToolbarItem) => {
-        // console.log('block type:', item.id)
-        if (item.id !== undefined && typeof item.id in RichTextAction) {
-            setSelectedRichTextAction(item.id);
-            console.log('selectedRichTextAction', selectedRichTextAction)
-        }
-
+    const handleToolbarSelect = (item: ToolbarItem) => {       
         switch (item.id) {
             case RichTextAction.Undo: {
                 const td = toolbarData.map(item =>
@@ -332,21 +327,43 @@ const LexicalToolbar = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: L
                 break;
             }
             case RichTextAction.Number: {
-                console.log('RichTextAction.Check blockType: Number', blockType)
                 activeEditor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
                 break;
             }
             case RichTextAction.Check: {
-                console.log('RichTextAction.Check blockType: check', blockType)
                 activeEditor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
                 break;
             }
             case RichTextAction.Quote: {
-                console.log('RichTextAction.Check blockType: Quote', blockType)
+
                 activeEditor.update(() => {
                     const selection = $getSelection();
                     $setBlocksType(selection, () => $createQuoteNode());
                 });
+                break;
+            }
+            case RichTextAction.HR: {
+                activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
+                break;
+            }
+            case RichTextAction.Image: {
+                console.log('RichTextAction.Image blockType: ', blockType)
+                activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
+                break;
+            }
+            case RichTextAction.InlineImage: {
+                console.log('RichTextAction.InlineImage blockType:', blockType)
+                activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
+                break;
+            }
+            case RichTextAction.Column: {
+                console.log('RichTextAction.Column blockType:', blockType)
+                activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
+                break;
+            }
+            case RichTextAction.YTVideo: {
+                console.log('RichTextAction.YTVideo blockType: ', blockType)
+                activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
                 break;
             }
             case RichTextAction.LeftAlign: {

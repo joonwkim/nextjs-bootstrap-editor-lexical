@@ -8,13 +8,14 @@ const EditorTheme = {
     h4: 'editor-heading-h4',
     h5: 'editor-heading-h5',
   },
+  hr: 'editor-hr',
   image: 'editor-image',
   link: 'editor-link',
   list: {
-    checklist: 'editor__checklist',    
+    checklist: 'editor-checklist',    
     listitem: 'editor-listitem',
-    listitemChecked: 'editor__listItemChecked',
-    listitemUnchecked: 'editor__listItemUnchecked',
+    listitemChecked: 'editor-listItemChecked',
+    listitemUnchecked: 'editor-listItemUnchecked',
     nested: {
       listitem: 'editor-nested-listitem',
     },
