@@ -41,8 +41,7 @@ export enum RichTextAction {
     Number = 'number',
     Check = 'check',
     Quote = 'quote',
-    BlockFormatItems ='blockFormatItems'
-
+    BlockFormatItems = 'blockFormatItems'
 }
 
 export function getRichTextAction(action: string): RichTextAction | undefined {
@@ -51,6 +50,16 @@ export function getRichTextAction(action: string): RichTextAction | undefined {
     }
     return undefined; // or handle invalid values
 }
+
+function capitalize(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export const actionName: { [key in RichTextAction]: string } = Object.keys(RichTextAction).reduce((acc, key) => {
+    const value = RichTextAction[key as keyof typeof RichTextAction];
+    acc[value] = capitalize(value); // Capitalize the enum value
+    return acc;
+}, {} as { [key in RichTextAction]: string });
 
 export interface DropdownItem {
     id?: RichTextAction,

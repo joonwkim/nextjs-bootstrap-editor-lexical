@@ -60,7 +60,7 @@ const LexicalPage = () => {
                         <p className="PlaygroundEditorTheme__paragraph">
                             <br />
                         </p>
-                        {/* <ul className="PlaygroundEditorTheme__ul PlaygroundEditorTheme__checklist">
+                        {/* <ul className="PlaygroundEditorTheme__ul editor__checklist">
                             <li role="checkbox" aria-checked="false" value="1" className="PlaygroundEditorTheme__listItem PlaygroundEditorTheme__listItemUnchecked PlaygroundEditorTheme__ltr" dir="ltr">
                                 <span data-lexical-text="true">글머리 체크</span>
                             </li>

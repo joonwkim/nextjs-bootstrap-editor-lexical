@@ -6,13 +6,15 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import './styles.css'
-
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import EditorTheme from './themes/editorTheme';
 import LexicalToolbar from './plugins/lexicalToolbar';
 import { toolbarData } from '../data/toolbarData';
-import { HeadingNode } from '@lexical/rich-text';
+import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import ReadOnlyPlugin from './plugins/readOnlyPlugin';
+import { ListItemNode, ListNode, } from '@lexical/list';
+import './styles.css'
 
 
 const Editor = () => {
@@ -24,7 +26,7 @@ const Editor = () => {
 
     const editorConfig = {
         namespace: 'React.js Lexical',
-        nodes: [HeadingNode],
+        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode],
         editorState:null,
         onError(error: Error) {
             console.log('error: ', error)
@@ -45,9 +47,7 @@ const Editor = () => {
             </button>
             <LexicalComposer initialConfig={editorConfig}>
                 <div className="container">
-
-                    {/* Conditionally render the toolbar based on read-only state */}
-                    {!isReadOnly && <LexicalToolbar lexicalToolbarData={toolbarData} isReadOnly={isReadOnly} setIsLinkEditMode={setIsLinkEditMode} />}  {/* Only show toolbar in edit mode */}                    
+                    {!isReadOnly && <LexicalToolbar lexicalToolbarData={toolbarData} isReadOnly={isReadOnly} setIsLinkEditMode={setIsLinkEditMode} />}        
                     <div>
                         <RichTextPlugin
                             contentEditable={
@@ -63,7 +63,9 @@ const Editor = () => {
                         />
                         <HistoryPlugin />
                         <AutoFocusPlugin />
-                        <ReadOnlyPlugin isReadOnly={isReadOnly} /> {/* Plugin to toggle read-only */}
+                        <ListPlugin />
+                        <CheckListPlugin />
+                        <ReadOnlyPlugin isReadOnly={isReadOnly} /> 
                     </div>
                 </div>
             </LexicalComposer>

@@ -1,5 +1,5 @@
 
-  const EditorTheme = {
+const EditorTheme = {
   code: 'editor-code',
   heading: {
     h1: 'editor-heading-h1',
@@ -11,7 +11,10 @@
   image: 'editor-image',
   link: 'editor-link',
   list: {
+    checklist: 'editor__checklist',    
     listitem: 'editor-listitem',
+    listitemChecked: 'editor__listItemChecked',
+    listitemUnchecked: 'editor__listItemUnchecked',
     nested: {
       listitem: 'editor-nested-listitem',
     },

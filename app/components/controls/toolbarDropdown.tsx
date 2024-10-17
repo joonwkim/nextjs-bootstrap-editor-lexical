@@ -24,6 +24,7 @@ const ToolbarDropdown = ({ dropdownItems, selectedItem, updateSelectionChange, h
     }, [dropdownItems, selectedItem])
 
     const handleSelect = (item: DropdownItem) => {
+        setSelectedDropDown(item)
         handleDropdownSelect(item);
     };
 
