@@ -35,4 +35,9 @@
     pointer-events: none;
     /* Ensures the button remains disabled */
 }
+.file-size-limit,
+.input-error {
+    color: red;
+    font-size: smaller;
+}
 

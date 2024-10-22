@@ -19,7 +19,7 @@ interface LexicalToolbarProps {
     setIsLinkEditMode: Dispatch<boolean>,
 }
 
-const LexicalToolbar = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: LexicalToolbarProps) => {
+const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: LexicalToolbarProps) => {
     const [editor] = useLexicalComposerContext();
     const [toolbarData, setToolbarData] = useState<ToolbarItem[]>(lexicalToolbarData)
     const [activeEditor, setActiveEditor] = useState(editor);
@@ -253,7 +253,7 @@ const LexicalToolbar = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: L
     }, [activeEditor, isLink, setIsLinkEditMode]);
 
 
-    const handleToolbarSelect = (item: ToolbarItem) => {       
+    const handleToolbarSelect = (item: ToolbarItem) => {
         switch (item.id) {
             case RichTextAction.Undo: {
                 const td = toolbarData.map(item =>
@@ -323,7 +323,7 @@ const LexicalToolbar = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: L
                 break;
             }
             case RichTextAction.Bullet: {
-                activeEditor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);               
+                activeEditor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
                 break;
             }
             case RichTextAction.Number: {
@@ -394,6 +394,6 @@ const LexicalToolbar = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: L
     )
 }
 
-export default LexicalToolbar
+export default ToolbarPlugin
 
 

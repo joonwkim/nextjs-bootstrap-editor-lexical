@@ -9,15 +9,15 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import EditorTheme from './themes/editorTheme';
-import LexicalToolbar from './plugins/lexicalToolbar';
+import LexicalToolbar from './plugins/ToolbarPlugin';
 import { toolbarData } from '../data/toolbarData';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
-import ReadOnlyPlugin from './plugins/readOnlyPlugin';
+import ReadOnlyPlugin from './plugins/ReadOnlyPlugin';
 import { ListItemNode, ListNode, } from '@lexical/list';
 import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
 import './styles.css'
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
-
+import CustomImageNode from './nodes/CustomImageNode';
 
 const Editor = () => {
     const [isReadOnly, setIsReadOnly] = useState(false); 
@@ -28,7 +28,7 @@ const Editor = () => {
 
     const editorConfig = {
         namespace: 'React.js Lexical',
-        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode],
+        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode, CustomImageNode],
         editorState:null,
         onError(error: Error) {
             console.log('error: ', error)
@@ -68,6 +68,7 @@ const Editor = () => {
                         <AutoFocusPlugin />
                         <ListPlugin />
                         <CheckListPlugin />
+
                         <HorizontalRulePlugin />
                     </div>
                 </div>

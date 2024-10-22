@@ -33,10 +33,6 @@ export default function RootLayout({
 }>) {
 
   const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('light');
-  const [sidebarWidth, setSidebarWidth] = useState(250);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-
-  const isResizing = useRef(false);
 
   //#region theme control
   const applyTheme = useCallback((newTheme: 'light' | 'dark' | 'auto') => {
@@ -58,35 +54,6 @@ export default function RootLayout({
     setTheme(newTheme);
     localStorage.setItem(THEME_KEY, newTheme);
     applyTheme(newTheme)
-  };
-
-  //#endregion
-
-  //#region layout control
-  useEffect(() => {
-    if (sidebarRef.current) {
-      sidebarRef.current.style.width = `${sidebarWidth}px`;
-    }
-  }, [sidebarWidth]);
-  const handleMouseMove = (e: MouseEvent) => {
-    if (isResizing.current && sidebarRef.current) {
-      const newWidth = e.clientX;
-      if (newWidth > MIN_WIDTH && newWidth < MAX_WIDTH) {
-        setSidebarWidth(newWidth);  // Set sidebar width dynamically
-      }
-    }
-  };
-
-  const handleMouseUp = () => {
-    isResizing.current = false;
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-  };
-
-  const handleMouseDown = () => {
-    isResizing.current = true;
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
   };
 
   //#endregion

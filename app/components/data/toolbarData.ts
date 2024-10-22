@@ -46,6 +46,7 @@ export enum RichTextAction {
     InlineImage = 'inline-image',
     Column = 'column',
     YTVideo = 'ytVideo',
+    Test = 'test',
     BlockFormatItems = 'blockFormatItems'
 }
 
@@ -82,7 +83,10 @@ export interface ToolbarItem extends DropdownItem {
     isDevider?: boolean,
     dropdownItems?: DropdownItem[],
     updateSelectionChange?: boolean,    
-    resetDropdown?:boolean,
+    resetDropdown?: boolean,
+    isModal?: boolean,
+    databstarget?: string,
+    databstoggle?: string,
 }
 
 export const blockFormatItems: DropdownItem[] = [
@@ -129,6 +133,7 @@ export const toolbarData: ToolbarItem[] = [
     { isDevider: true, id: RichTextAction.Divider },
     { name: '정렬', isDropdown: true, title: '정렬', dropdownItems: alignFormatItems, updateSelectionChange: true },
     { isDevider: true, id: RichTextAction.Divider },
+    { name: 'Modal', isModal: true, icon: 'bi-file-image', title: 'Modal', databstarget: '#insertImageModal', databstoggle: 'modal', id: RichTextAction.Test },
 ]
 
 

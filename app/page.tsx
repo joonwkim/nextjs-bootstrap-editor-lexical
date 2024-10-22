@@ -1,8 +1,4 @@
 'use client'
-// import { TypingAnimation } from "./components/animation/typing";
-// import Toolbar from "./components/dropdownControl/toolbar";
-// import Toolbar from "./components/dropdownControl/toolbar";
-// import { ToolbarItem } from "./components/dropdownControl/types/toolbar";
 import Editor from "./components/editor/Editor";
 import './globals.css'
 
@@ -10,8 +6,11 @@ import './globals.css'
 
 export default function Home() {
 
+
+
   return (
     <div className="container">
+
       {/* <div className="container">
         <h1>Toolbar Component</h1>
         <Toolbar />
