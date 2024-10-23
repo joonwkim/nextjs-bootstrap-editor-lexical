@@ -3,9 +3,9 @@ import ToolbarDropdown from './toolbarDropdown';
 
 import './styles.css'
 import InsertImageModal from '../editor/modals/insertImageModal';
-import InsertSampleImage from '../editor/modals/insertSampleImage';
-import InsertImageUrl from '../editor/modals/insertImageUrl';
-import InsertImageFile from '../editor/modals/insertImageFile';
+// import InsertSampleImage from '../editor/modals/insertSampleImage';
+// import InsertImageUrl from '../editor/modals/insertImageUrl';
+// import InsertImageFile from '../editor/modals/insertImageFile';
 
 interface ToolbarProps {
     toolbarData: ToolbarItem[],
@@ -26,9 +26,9 @@ const Toolbar = ({ toolbarData, selectedItem, handleToolbarSelect }: ToolbarProp
                             handleDropdownSelect={handleToolbarSelect} />
                     ) : (item.isDevider ? (<div className="divider"></div>) :
                         (item.isModal ? (<>
-                            <button className='btn btn-outline-secondary border-0' data-bs-target={item.databstarget} data-bs-toggle={item.databstoggle} title={item.title} >
+                                {/* <button className='btn btn-outline-secondary border-0' data-bs-target={item.databstarget} data-bs-toggle={item.databstoggle} title={item.title} >
                                 <i className={item.icon}></i>
-                            </button>
+                            </button> */}
                             <InsertImageModal />
                         </>) : (<button className='btn btn-outline-secondary border-0' disabled={item.disabled} title={item.title} data-bs-toggle="button"
                             onClick={() => handleToolbarSelect(item)}> <i className={item.icon}></i> </button>)

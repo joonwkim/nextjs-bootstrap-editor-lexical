@@ -119,7 +119,7 @@ const InsertImageUrl = () => {
                     </div>
                     <div className='modal-footer'>
                         <div className='me-5'>
-                            <button type="submit" className="btn btn-outline-light border-0" form='insertImageUrlForm' data-bs-dismiss="modal" disabled={!isUrlValid}>확인</button>
+                            <button type="submit" className="btn btn-outline-secondary border-0" form='insertImageUrlForm' data-bs-dismiss="modal" disabled={!isUrlValid}>확인</button>
                         </div>
                     </div>
 

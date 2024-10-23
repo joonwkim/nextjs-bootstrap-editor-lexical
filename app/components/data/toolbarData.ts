@@ -1,19 +1,3 @@
-// import {
-//     ArrowClockwise,
-//     ArrowCounterclockwise,
-//     Code,
-//     Highlighter,
-//     Justify,
-//     JustifyLeft,
-//     JustifyRight,
-//     Subscript,
-//     Superscript,
-//     TextCenter,
-//     TypeBold,
-//     TypeItalic,
-//     TypeStrikethrough,
-//     TypeUnderline,
-// } from "react-bootstrap-icons";
 export const LOW_PRIORIRTY = 1;
 export const HEADINGS =['H1',]
 
@@ -73,6 +57,9 @@ export interface DropdownItem {
     icon?: string; 
     active?: boolean;
     disabled?: boolean;
+    isModal?: boolean,
+    databstarget?: string,
+    databstoggle?: string,
     // reset?: boolean;
 }
 export interface ToolbarItem extends DropdownItem {
@@ -111,7 +98,7 @@ export const alignFormatItems: DropdownItem[] = [
 ];
 export const insertItems: DropdownItem[] = [
     { name: '수평선', icon: 'bi-hr', active: false, id: RichTextAction.HR },
-    { name: '이미지', icon: 'bi-file-image', active: false, id: RichTextAction.Image },
+    { name: '이미지', icon: 'bi-file-image', active: false, isModal: true, databstarget: '#insertImageModal', databstoggle: 'modal', id: RichTextAction.Image },
     { name: '인라인 이미지', icon: 'bi-file-image', active: false, id: RichTextAction.InlineImage },
     { name: '컬럼 레이아웃', icon: 'bi-layout-three-columns', active: false, id: RichTextAction.Column },
     { name: '유튜비디오', icon: 'bi-youtube', active: false, id: RichTextAction.YTVideo },

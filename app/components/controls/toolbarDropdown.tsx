@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { DropdownItem } from '../data/toolbarData';
+import InsertImageModal from '../editor/modals/insertImageModal';
+// import InsertImageModal from '../editor/modals/insertImageModal';
 
 interface ToolbarDropdownProps {
     dropdownItems?: DropdownItem[],
@@ -39,15 +41,33 @@ const ToolbarDropdown = ({ dropdownItems, selectedItem, updateSelectionChange, h
                     <button type="button" className="btn btn-outline-secondary dropdown-toggle border-0" data-bs-toggle="dropdown" aria-expanded="false" title="Options">
                         <i className='bi bi-plus'></i>삽입<i className='bi bi-chevron ms-2'></i>
                     </button>)}
+
                 <ul className="dropdown-menu">
                     {dropdownItems?.map((item, index) => (
-                        <li key={index} onClick={() => handleSelect(item)}>
-                            <a className={`dropdown-item${item.active === true ? ' active' : ''}`} href="#">
-                                <i className={`bi ${item.icon}`}></i> {item.name}
-                            </a>
+                        <li key={index} >
+                            {item.isModal ? (<>
+                                <button className={`dropdown-item${item.active === true ? ' active' : ''}`} data-bs-target={item.databstarget} data-bs-toggle={item.databstoggle}>
+                                    <i className={`bi ${item.icon}`}></i> {item.name}
+                                </button>
+                            </>) : (<>
+                                <button className={`dropdown-item${item.active === true ? ' active' : ''}`} onClick={() => handleSelect(item)}>
+                                    <i className={`bi ${item.icon}`}></i> {item.name}
+                                </button>
+                            </>)}
+
                         </li>
                     ))}
                 </ul>
+
+                {/* <ul className="dropdown-menu">
+                    {dropdownItems?.map((item, index) => (
+                        <li key={index} >
+                            <button className={`dropdown-item${item.active === true ? ' active' : ''}`} onClick={() => handleSelect(item)}>
+                                <i className={`bi ${item.icon}`}></i> {item.name}
+                            </button>
+                        </li>
+                    ))}
+                </ul> */}
             </div>
         </div>
     );

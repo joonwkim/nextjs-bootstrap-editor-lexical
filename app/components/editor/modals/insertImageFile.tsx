@@ -110,7 +110,7 @@ const InsertImageFile = () => {
                     </div>
                     <div className='modal-footer'>
                         <div className='me-5'>
-                            <button type="submit" className="btn btn-outline-light border-0" form='insertImageFileForm' data-bs-dismiss="modal" disabled={isButtonDisabled} >확인</button>
+                            <button type="submit" className="btn btn-outline-secondary border-0" form='insertImageFileForm' data-bs-dismiss="modal" disabled={isButtonDisabled} >확인</button>
                         </div>
                     </div>
 

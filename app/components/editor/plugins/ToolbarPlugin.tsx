@@ -10,7 +10,7 @@ import { $createHeadingNode, $createQuoteNode, $isHeadingNode } from '@lexical/r
 import { $isListNode, INSERT_CHECK_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, ListNode, } from '@lexical/list';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { getSelectedNode } from '../utils/getSelectedNode';
-import { sanitizeUrl } from '../utils/url';
+// import { sanitizeUrl } from '../utils/url';
 import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
 
 interface LexicalToolbarProps {
@@ -348,7 +348,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
             }
             case RichTextAction.Image: {
                 console.log('RichTextAction.Image blockType: ', blockType)
-                activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
+                // activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
                 break;
             }
             case RichTextAction.InlineImage: {

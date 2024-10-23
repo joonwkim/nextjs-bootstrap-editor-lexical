@@ -18,6 +18,7 @@ import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin
 import './styles.css'
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import CustomImageNode from './nodes/CustomImageNode';
+import TreeViewPlugin from './plugins/TreeViewPlugin';
 
 const Editor = () => {
     const [isReadOnly, setIsReadOnly] = useState(false); 
@@ -68,8 +69,8 @@ const Editor = () => {
                         <AutoFocusPlugin />
                         <ListPlugin />
                         <CheckListPlugin />
-
                         <HorizontalRulePlugin />
+                        <TreeViewPlugin />
                     </div>
                 </div>
             </LexicalComposer>
