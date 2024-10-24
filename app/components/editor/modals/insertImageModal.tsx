@@ -1,5 +1,5 @@
 import React from 'react'
-import InsertSampleImage from './insertSampleImage'
+// import InsertSampleImage from './insertSampleImage'
 import InsertImageUrl from './insertImageUrl'
 import InsertImageFile from './insertImageFile'
 
@@ -15,7 +15,7 @@ const InsertImageModal = () => {
                     </div>
                     <div className="modal-body my-3">
                         <div className="row g-3">
-                            <button className="btn btn-outline-secondary border-0" data-bs-target="#" data-bs-toggle="modal">샘플그림 삽입</button>
+                            {/* <button className="btn btn-outline-secondary border-0" data-bs-target="#" data-bs-toggle="modal">샘플그림 삽입</button> */}
                             <button className="btn btn-outline-secondary border-0" data-bs-target="#insertImageUrlModal" data-bs-toggle="modal">URL 입력</button>
                             <button className="btn btn-outline-secondary border-0" data-bs-target="#insertImageFileModal" data-bs-toggle="modal">파일 입력</button>
                         </div>
@@ -23,7 +23,7 @@ const InsertImageModal = () => {
                 </div>
             </div>
         </div>
-        <InsertSampleImage />
+        {/* <InsertSampleImage /> */}
         <InsertImageUrl />
         <InsertImageFile />
     </>

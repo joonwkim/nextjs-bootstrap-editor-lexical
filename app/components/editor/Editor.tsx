@@ -53,7 +53,7 @@ const Editor = () => {
                 <LexicalComposer initialConfig={editorConfig}>
                     <div className="editor-scroller">
                         {!isReadOnly && <LexicalToolbar lexicalToolbarData={toolbarData} isReadOnly={isReadOnly} setIsLinkEditMode={setIsLinkEditMode} />}
-                        <div>
+                        <div className='editor' >
                             <RichTextPlugin
                                 contentEditable={
                                     <ContentEditable

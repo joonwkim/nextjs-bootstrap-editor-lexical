@@ -11,7 +11,7 @@ const ImageModal = () => {
         <div>
             <button className="btn btn-outline-light border-0 mb-3" data-bs-target="#insertImageModal" data-bs-toggle="modal">그림 삽입</button>
             <InsertImageModal />
-            <InsertSampleImage />
+            {/* <InsertSampleImage /> */}
             <InsertImageUrl />
             <InsertImageFile />
 
