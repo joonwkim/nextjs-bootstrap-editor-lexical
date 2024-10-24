@@ -3,9 +3,10 @@ import { $createNodeSelection, $getRoot, $getSelection, $insertNodes, $setSelect
 import React, { useState } from 'react'
 // import CustomImageNode, { $createCustomImageNode } from '../nodes/CustomImageNode';
 import { $createImageNode } from '../nodes/ImageNode';
+import { InsertImagePayload } from '../plugins/ToolbarPlugin';
 
 
-const InsertImageFile = () => {
+const InsertImageFile = ({ onClick }: { onClick: (payload: InsertImagePayload) => void, }) => {
     const [file, setFile] = useState<File | null>(null);
     const [altText, setAltText] = useState<string>('');
     const [fileError, setFileError] = useState<string>('');
@@ -35,42 +36,43 @@ const InsertImageFile = () => {
 
         if (file) {
             const src = URL.createObjectURL(file);
-            const img = new Image();
-            img.src = src;
-            img.onload = () => {
-                const width = img.width;
-                const height = img.height;
-                editor.update(() => {
+            onClick({ src: src, altText: altText })
+            // const img = new Image();
+            // img.src = src;
+            // img.onload = () => {
+            //     const width = img.width;
+            //     const height = img.height;
+            //     editor.update(() => {
 
-                    // const root = $getRoot();
-                    // // const selection = $getSelection();
-                    // let paragraphNode = $createParagraphNode();
-                    // const textNode = $createTextNode('Hello world');
-                    // paragraphNode.append(textNode);
-                    // root.append(paragraphNode);
+            //         // const root = $getRoot();
+            //         // // const selection = $getSelection();
+            //         // let paragraphNode = $createParagraphNode();
+            //         // const textNode = $createTextNode('Hello world');
+            //         // paragraphNode.append(textNode);
+            //         // root.append(paragraphNode);
 
-                    const imageNode = $createImageNode({ src, altText, width, height });
-                    // const imageNode = $createCustomImageNode(src, altText, width, height);
-                    const selection = $getSelection();
-                    if (selection) {
-                        $insertNodes([imageNode]);
-                        // const nodeSelection = $createNodeSelection();
-                        // nodeSelection.add(imageNode.getKey());
-                        // $setSelection(nodeSelection);
-                    } else {
-                        // If no selection, append it to the root
-                        const root = $getRoot();
-                        root.append(imageNode);
-                    }
+            //         const imageNode = $createImageNode({ src, altText, width, height });
+            //         // const imageNode = $createCustomImageNode(src, altText, width, height);
+            //         const selection = $getSelection();
+            //         if (selection) {
+            //             $insertNodes([imageNode]);
+            //             // const nodeSelection = $createNodeSelection();
+            //             // nodeSelection.add(imageNode.getKey());
+            //             // $setSelection(nodeSelection);
+            //         } else {
+            //             // If no selection, append it to the root
+            //             const root = $getRoot();
+            //             root.append(imageNode);
+            //         }
 
 
-                    // const selection = $getSelection();
-                    // paragraphNode = $createParagraphNode();
-                    // textNode = $createTextNode('Hello world 2');
-                    // paragraphNode.append(textNode);
-                    // root.append(paragraphNode);
-                });
-            }
+            //         // const selection = $getSelection();
+            //         // paragraphNode = $createParagraphNode();
+            //         // textNode = $createTextNode('Hello world 2');
+            //         // paragraphNode.append(textNode);
+            //         // root.append(paragraphNode);
+            //     });
+            // }
         }
 
         setFile(null)

@@ -2,8 +2,9 @@ import React from 'react'
 // import InsertSampleImage from './insertSampleImage'
 import InsertImageUrl from './insertImageUrl'
 import InsertImageFile from './insertImageFile'
+import { InsertImagePayload } from '../plugins/ToolbarPlugin'
 
-const InsertImageModal = () => {
+const InsertImageModal = ({ onClick }: { onClick: (payload: InsertImagePayload) => void, }) => {
 
     return (<>
         <div className="modal fade" id="insertImageModal" aria-hidden="true" aria-labelledby="insertImageModalToggleLabel" tabIndex={-1}>
@@ -24,8 +25,8 @@ const InsertImageModal = () => {
             </div>
         </div>
         {/* <InsertSampleImage /> */}
-        <InsertImageUrl />
-        <InsertImageFile />
+        <InsertImageUrl onClick={onClick} />
+        <InsertImageFile onClick={onClick} />
     </>
 
     )

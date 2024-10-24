@@ -3,8 +3,8 @@ import React, { Dispatch, useCallback, useEffect, useState } from 'react'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { actionName, DropdownItem, getRichTextAction, RichTextAction, ToolbarItem } from '../../data/toolbarData';
 import Toolbar from '../../controls/toolbar';
-import { $createParagraphNode, $getSelection, $isElementNode, $isRangeSelection, $isRootOrShadowRoot, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_CRITICAL, COMMAND_PRIORITY_NORMAL, ElementFormatType, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, KEY_MODIFIER_COMMAND, NodeKey, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from 'lexical';
-import { $findMatchingParent, $isEditorIsNestedEditor, $getNearestNodeOfType, mergeRegister } from '@lexical/utils'
+import { $createParagraphNode, $createRangeSelection, $getSelection, $insertNodes, $isElementNode, $isNodeSelection, $isRangeSelection, $isRootOrShadowRoot, $setSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_CRITICAL, COMMAND_PRIORITY_EDITOR, COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW, COMMAND_PRIORITY_NORMAL, createCommand, DRAGOVER_COMMAND, DRAGSTART_COMMAND, DROP_COMMAND, ElementFormatType, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, KEY_MODIFIER_COMMAND, LexicalCommand, LexicalEditor, NodeKey, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from 'lexical';
+import { $findMatchingParent, $isEditorIsNestedEditor, $getNearestNodeOfType, mergeRegister, $wrapNodeInElement } from '@lexical/utils'
 import { $isParentElementRTL, $setBlocksType } from '@lexical/selection';
 import { $createHeadingNode, $createQuoteNode, $isHeadingNode } from '@lexical/rich-text';
 import { $isListNode, INSERT_CHECK_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, ListNode, } from '@lexical/list';
@@ -12,11 +12,150 @@ import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { getSelectedNode } from '../utils/getSelectedNode';
 // import { sanitizeUrl } from '../utils/url';
 import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
+import { $createImageNode, $isImageNode, ImageNode, ImagePayload } from '../nodes/ImageNode';
+import { CAN_USE_DOM } from '@lexical/utils'
+import { sanitizeUrl } from '../utils/url';
 
+const getDOMSelection = (targetWindow: Window | null): Selection | null => CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
+
+export type InsertImagePayload = Readonly<ImagePayload>;
+export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> = createCommand('INSERT_IMAGE_COMMAND');
 interface LexicalToolbarProps {
     isReadOnly: boolean,
     lexicalToolbarData: ToolbarItem[],
     setIsLinkEditMode: Dispatch<boolean>,
+}
+
+const TRANSPARENT_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+const img = document.createElement('img');
+img.src = TRANSPARENT_IMAGE;
+
+function $onDragStart(event: DragEvent): boolean {
+    const node = $getImageNodeInSelection();
+    if (!node) {
+        return false;
+    }
+    const dataTransfer = event.dataTransfer;
+    if (!dataTransfer) {
+        return false;
+    }
+    dataTransfer.setData('text/plain', '_');
+    dataTransfer.setDragImage(img, 0, 0);
+    dataTransfer.setData(
+        'application/x-lexical-drag',
+        JSON.stringify({
+            data: {
+                altText: node.__altText,
+                caption: node.__caption,
+                height: node.__height,
+                key: node.getKey(),
+                maxWidth: node.__maxWidth,
+                showCaption: node.__showCaption,
+                src: node.__src,
+                width: node.__width,
+            },
+            type: 'image',
+        }),
+    );
+
+    return true;
+}
+
+function $onDragover(event: DragEvent): boolean {
+    const node = $getImageNodeInSelection();
+    if (!node) {
+        return false;
+    }
+    if (!canDropImage(event)) {
+        event.preventDefault();
+    }
+    return true;
+}
+
+function $onDrop(event: DragEvent, editor: LexicalEditor): boolean {
+    const node = $getImageNodeInSelection();
+    if (!node) {
+        return false;
+    }
+    const data = getDragImageData(event);
+    if (!data) {
+        return false;
+    }
+    event.preventDefault();
+    if (canDropImage(event)) {
+        const range = getDragSelection(event);
+        node.remove();
+        const rangeSelection = $createRangeSelection();
+        if (range !== null && range !== undefined) {
+            rangeSelection.applyDOMRange(range);
+        }
+        $setSelection(rangeSelection);
+        editor.dispatchCommand(INSERT_IMAGE_COMMAND, data);
+    }
+    return true;
+}
+
+function $getImageNodeInSelection(): ImageNode | null {
+    const selection = $getSelection();
+    if (!$isNodeSelection(selection)) {
+        return null;
+    }
+    const nodes = selection.getNodes();
+    const node = nodes[0];
+    return $isImageNode(node) ? node : null;
+}
+
+function getDragImageData(event: DragEvent): null | InsertImagePayload {
+    const dragData = event.dataTransfer?.getData('application/x-lexical-drag');
+    if (!dragData) {
+        return null;
+    }
+    const { type, data } = JSON.parse(dragData);
+    if (type !== 'image') {
+        return null;
+    }
+
+    return data;
+}
+
+declare global {
+    interface DragEvent {
+        rangeOffset?: number;
+        rangeParent?: Node;
+    }
+}
+
+function canDropImage(event: DragEvent): boolean {
+    const target = event.target;
+    return !!(
+        target &&
+        target instanceof HTMLElement &&
+        !target.closest('code, span.editor-image') &&
+        target.parentElement &&
+        target.parentElement.closest('div.ContentEditable__root')
+    );
+}
+
+function getDragSelection(event: DragEvent): Range | null | undefined {
+    let range;
+    const target = event.target as null | Element | Document;
+    const targetWindow =
+        target == null
+            ? null
+            : target.nodeType === 9
+                ? (target as Document).defaultView
+                : (target as Element).ownerDocument.defaultView;
+    const domSelection = getDOMSelection(targetWindow);
+    if (document.caretRangeFromPoint) {
+        range = document.caretRangeFromPoint(event.clientX, event.clientY);
+    } else if (event.rangeParent && domSelection !== null) {
+        domSelection.collapse(event.rangeParent, event.rangeOffset || 0);
+        range = domSelection.getRangeAt(0);
+    } else {
+        throw Error(`Cannot get the selection when dragging`);
+    }
+
+    return range;
 }
 
 const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: LexicalToolbarProps) => {
@@ -137,6 +276,46 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
         // console.log('LexicalToolbar use effect set toolbar  data')
         setToolbarData(lexicalToolbarData)
     }, [lexicalToolbarData])
+
+    //useEffect mergeRegister: insert image command
+    useEffect(() => {
+        console.log('insert image command: ')
+        if (!editor.hasNodes([ImageNode])) {
+            throw new Error('ImagesPlugin: ImageNode not registered on editor');
+        }
+        return mergeRegister(editor.registerCommand<InsertImagePayload>(INSERT_IMAGE_COMMAND, (payload) => {
+            const imageNode = $createImageNode(payload); $insertNodes([imageNode]);
+            if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
+                $wrapNodeInElement(imageNode, $createParagraphNode).selectEnd();
+            }
+
+            return true;
+        },
+            COMMAND_PRIORITY_EDITOR,
+        ),
+            editor.registerCommand<DragEvent>(
+                DRAGSTART_COMMAND,
+                (event) => {
+                    return $onDragStart(event);
+                },
+                COMMAND_PRIORITY_HIGH,
+            ),
+            editor.registerCommand<DragEvent>(
+                DRAGOVER_COMMAND,
+                (event) => {
+                    return $onDragover(event);
+                },
+                COMMAND_PRIORITY_LOW,
+            ),
+            editor.registerCommand<DragEvent>(
+                DROP_COMMAND,
+                (event) => {
+                    return $onDrop(event, editor);
+                },
+                COMMAND_PRIORITY_HIGH,
+            ),
+        );
+    }, [editor]);
 
     //register SELECTION_CHANGE_COMMAND setActiveEditor updateToolbar
     useEffect(() => {
@@ -385,15 +564,18 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
         }
     }
 
+    const onClick = (payload: InsertImagePayload) => {
+        activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
+        // onClose();
+    };
+
     return (
         <div>
 
-            <Toolbar toolbarData={toolbarData} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} />
+            <Toolbar toolbarData={toolbarData} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} onClick={onClick} />
         </div>
 
     )
 }
 
 export default ToolbarPlugin
-
-

@@ -6,34 +6,37 @@ import React, { useState } from 'react'
 import CustomImageNode from '../nodes/CustomImageNode';
 import { $createNodeSelection, $getRoot, $getSelection, $insertNodes, $setSelection } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { InsertImagePayload } from '../plugins/ToolbarPlugin';
 
-const InsertImageUrl = () => {
+const InsertImageUrl = ({ onClick }: { onClick: (payload: InsertImagePayload) => void, }) => {
+
     const [editor] = useLexicalComposerContext();
     const [formData, setFormData] = useState({ url: '', referrer: '' });
     const [isUrlValid, setIsUrlValid] = useState(false);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        onClick({ src: formData.url, altText: formData.referrer })
 
-        editor.update(() => {
-            const imageNode = new CustomImageNode(formData.url, formData.referrer);
+        // editor.update(() => {
+        //     const imageNode = new CustomImageNode(formData.url, formData.referrer);
 
-            // Insert the image node into the editor's root or at the current selection point
-            const selection = $getSelection();
-            if (selection) {
-                $insertNodes([imageNode]);
+        //     // Insert the image node into the editor's root or at the current selection point
+        //     const selection = $getSelection();
+        //     if (selection) {
+        //         $insertNodes([imageNode]);
 
-                // Select the new node
-                const nodeSelection = $createNodeSelection();
-                nodeSelection.add(imageNode.getKey());
-                $setSelection(nodeSelection);
+        //         // Select the new node
+        //         const nodeSelection = $createNodeSelection();
+        //         nodeSelection.add(imageNode.getKey());
+        //         $setSelection(nodeSelection);
 
-            } else {
-                // If no selection, append it to the root
-                const root = $getRoot();
-                root.append(imageNode);
-            }
-        });
+        //     } else {
+        //         // If no selection, append it to the root
+        //         const root = $getRoot();
+        //         root.append(imageNode);
+        //     }
+        // });
 
 
         setFormData({ url: '', referrer: '' });
@@ -75,7 +78,7 @@ const InsertImageUrl = () => {
                     </div>
                     <div className="modal-body">
                         <div className="container mt-5">
-                            <form onSubmit={handleSubmit} id='insertImageUrlForm'>
+                            <form onSubmit={(handleSubmit)} id='insertImageUrlForm'>
                                 <div className="mb-3 d-flex">
                                     <label htmlFor="url" className="form-label mt-1 col-3">그림 URL</label>
                                     <div className='col-9'>
