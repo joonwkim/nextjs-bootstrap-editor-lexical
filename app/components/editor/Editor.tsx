@@ -17,8 +17,9 @@ import { ListItemNode, ListNode, } from '@lexical/list';
 import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
 import './styles.css'
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
-import CustomImageNode from './nodes/CustomImageNode';
+// import CustomImageNode from './nodes/CustomImageNode';
 import TreeViewPlugin from './plugins/TreeViewPlugin';
+import { ImageNode } from './nodes/ImageNode';
 
 const Editor = () => {
     const [isReadOnly, setIsReadOnly] = useState(false); 
@@ -29,7 +30,7 @@ const Editor = () => {
 
     const editorConfig = {
         namespace: 'React.js Lexical',
-        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode, CustomImageNode],
+        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode, ImageNode],
         editorState:null,
         onError(error: Error) {
             console.log('error: ', error)
@@ -43,37 +44,40 @@ const Editor = () => {
     };
 
     return (
-        <div>
+        <div className='editor-shell'>
             
             <button onClick={toggleEditMode}>
                 {isReadOnly ? 'Switch to Edit Mode' : 'Switch to Read-Only'}
             </button>
-            <LexicalComposer initialConfig={editorConfig}>
-                <div className="container">
-                    {!isReadOnly && <LexicalToolbar lexicalToolbarData={toolbarData} isReadOnly={isReadOnly} setIsLinkEditMode={setIsLinkEditMode} />}        
-                    <div>
-                        <RichTextPlugin
-                            contentEditable={
-                                <ContentEditable
-                                    className="editor-input"
-                                    aria-placeholder={placeholder}
-                                    placeholder={
-                                        <div className="editor-placeholder">{placeholder}</div>
-                                    }
-                                />
-                            }
-                            ErrorBoundary={LexicalErrorBoundary}
-                        />
-                        <ReadOnlyPlugin isReadOnly={isReadOnly} /> 
-                        <HistoryPlugin />
-                        <AutoFocusPlugin />
-                        <ListPlugin />
-                        <CheckListPlugin />
-                        <HorizontalRulePlugin />
-                        <TreeViewPlugin />
+            <div className='editor-container tree-view'>
+                <LexicalComposer initialConfig={editorConfig}>
+                    <div className="editor-scroller">
+                        {!isReadOnly && <LexicalToolbar lexicalToolbarData={toolbarData} isReadOnly={isReadOnly} setIsLinkEditMode={setIsLinkEditMode} />}
+                        <div>
+                            <RichTextPlugin
+                                contentEditable={
+                                    <ContentEditable
+                                        className="editor-input"
+                                        aria-placeholder={placeholder}
+                                        placeholder={
+                                            <div className="editor-placeholder">{placeholder}</div>
+                                        }
+                                    />
+                                }
+                                ErrorBoundary={LexicalErrorBoundary}
+                            />
+                            <ReadOnlyPlugin isReadOnly={isReadOnly} />
+                            <HistoryPlugin />
+                            <AutoFocusPlugin />
+                            <ListPlugin />
+                            <CheckListPlugin />
+                            <HorizontalRulePlugin />
+                            <TreeViewPlugin />
+                        </div>
                     </div>
-                </div>
-            </LexicalComposer>
+                </LexicalComposer>
+            </div>
+
         </div>
        
     );

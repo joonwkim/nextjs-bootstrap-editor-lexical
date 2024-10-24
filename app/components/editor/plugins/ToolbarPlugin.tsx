@@ -387,7 +387,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
 
     return (
         <div>
-            {blockType}
+
             <Toolbar toolbarData={toolbarData} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} />
         </div>
 

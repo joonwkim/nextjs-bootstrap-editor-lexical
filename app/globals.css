@@ -1,3 +1,37 @@
+/* styles/globals.css */
+
+/* Light mode styles */
+[data-bs-theme="light"] body {
+    background-color: #f8f9fa;
+    /* Light background for the body */
+}
+
+[data-bs-theme="light"] .container {
+    background-color: #ffffff;
+    /* Light background for the container */
+}
+
+/* Dark mode styles */
+[data-bs-theme="dark"] body {
+    background-color: #333;
+    /* Dark background for the body */
+}
+
+[data-bs-theme="dark"] .container {
+    background-color: #444;
+    /* Slightly lighter background for the container */
+}
+
+.container {
+    padding: 20px;
+    transition: background-color 0.3s ease;
+    /* Smooth transition for theme change */
+}
+
+body {
+    transition: background-color 0.3s ease;
+    /* Smooth transition for theme change */
+}
 .dFlex {
     display: flex;
 }

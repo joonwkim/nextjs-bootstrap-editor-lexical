@@ -1,7 +1,8 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $createNodeSelection, $getRoot, $getSelection, $insertNodes, $setSelection } from 'lexical';
 import React, { useState } from 'react'
-import CustomImageNode from '../nodes/CustomImageNode';
+// import CustomImageNode, { $createCustomImageNode } from '../nodes/CustomImageNode';
+import { $createImageNode } from '../nodes/ImageNode';
 
 
 const InsertImageFile = () => {
@@ -13,15 +14,13 @@ const InsertImageFile = () => {
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             const selectedFile = event.target.files[0];
-            // Check file size (1 MB = 1 * 1024 * 1024 bytes)
             if (selectedFile.size > 1 * 1024 * 1024) {
                 setFileError('File size must be 1 MB or less.');
-                setFile(null); // Reset file state
+                setFile(null); 
             } else {
-                setFileError(''); // Clear any previous error
+                setFileError(''); 
                 setFile(selectedFile);
             }
-
         }
     };
 
@@ -33,31 +32,59 @@ const InsertImageFile = () => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // Handle file upload and alt text submission here
+
         if (file) {
             const src = URL.createObjectURL(file);
-            editor.update(() => {
-                const imageNode = new CustomImageNode(src, altText);
+            const img = new Image();
+            img.src = src;
+            img.onload = () => {
+                const width = img.width;
+                const height = img.height;
+                editor.update(() => {
 
-                // Insert the image node into the editor's root or at the current selection point
-                const selection = $getSelection();
-                if (selection) {
-                    $insertNodes([imageNode]);
+                    // const root = $getRoot();
+                    // // const selection = $getSelection();
+                    // let paragraphNode = $createParagraphNode();
+                    // const textNode = $createTextNode('Hello world');
+                    // paragraphNode.append(textNode);
+                    // root.append(paragraphNode);
 
-                    // Select the new node
-                    const nodeSelection = $createNodeSelection();
-                    nodeSelection.add(imageNode.getKey());
-                    $setSelection(nodeSelection);
-                } else {
-                    // If no selection, append it to the root
-                    const root = $getRoot();
-                    root.append(imageNode);
-                }
-            });
+                    const imageNode = $createImageNode({ src, altText, width, height });
+                    // const imageNode = $createCustomImageNode(src, altText, width, height);
+                    const selection = $getSelection();
+                    if (selection) {
+                        $insertNodes([imageNode]);
+                        // const nodeSelection = $createNodeSelection();
+                        // nodeSelection.add(imageNode.getKey());
+                        // $setSelection(nodeSelection);
+                    } else {
+                        // If no selection, append it to the root
+                        const root = $getRoot();
+                        root.append(imageNode);
+                    }
+
+
+                    // const selection = $getSelection();
+                    // paragraphNode = $createParagraphNode();
+                    // textNode = $createTextNode('Hello world 2');
+                    // paragraphNode.append(textNode);
+                    // root.append(paragraphNode);
+                });
+            }
         }
 
         setFile(null)
         setAltText('');
+
+        const removeDecoratorListener = editor.registerDecoratorListener(
+            (decorators) => {
+                // The editor's decorators object is passed in!
+                console.log(decorators);
+            },
+        );
+
+        // Do not forget to unregister the listener when no longer needed!
+        removeDecoratorListener();
     };
 
 

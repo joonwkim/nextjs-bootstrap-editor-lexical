@@ -119,7 +119,7 @@ export const toolbarData: ToolbarItem[] = [
     { name: '삽입', isDropdown: true, title: '삽입', dropdownItems: insertItems },
     { isDevider: true, id: RichTextAction.Divider },
     { name: '정렬', isDropdown: true, title: '정렬', dropdownItems: alignFormatItems, updateSelectionChange: true },
-    { isDevider: true, id: RichTextAction.Divider },
+    // { isDevider: true, id: RichTextAction.Divider },
     { name: 'Modal', isModal: true, icon: 'bi-file-image', title: 'Modal', databstarget: '#insertImageModal', databstoggle: 'modal', id: RichTextAction.Test },
 ]
 
