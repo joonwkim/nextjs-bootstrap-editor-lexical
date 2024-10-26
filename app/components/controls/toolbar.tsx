@@ -1,23 +1,19 @@
-import { DropdownItem, ToolbarItem } from '../data/toolbarData';
+import { DropdownItem, RichTextAction, ToolbarItem } from '../data/toolbarData';
 import ToolbarDropdown from './toolbarDropdown';
-
-import './styles.css'
 import InsertImageModal from '../editor/modals/insertImageModal';
 import { InsertImagePayload } from '../editor/plugins/ToolbarPlugin';
-// import InsertSampleImage from '../editor/modals/insertSampleImage';
-// import InsertImageUrl from '../editor/modals/insertImageUrl';
-// import InsertImageFile from '../editor/modals/insertImageFile';
-
+import './styles.css'
 interface ToolbarProps {
     toolbarData: ToolbarItem[],
     selectedItem: DropdownItem | undefined;
+    canUndo: boolean,
+    canRedo: boolean,
     handleToolbarSelect: (item: ToolbarItem) => void,
     onClick: (payload: InsertImagePayload) => void,
 }
 
-const Toolbar = ({ toolbarData, selectedItem, handleToolbarSelect, onClick }: ToolbarProps) => {
+const Toolbar = ({ toolbarData, canUndo, canRedo, selectedItem, handleToolbarSelect, onClick }: ToolbarProps) => {
 
-    // Track selected item
     return (
         <div className='btn-toolbar' role='group' aria-label='Toolbar with button groups'>
             {toolbarData.map((item: ToolbarItem, index: number) => (
@@ -32,13 +28,12 @@ const Toolbar = ({ toolbarData, selectedItem, handleToolbarSelect, onClick }: To
                                 <i className={item.icon}></i>
                             </button> */}
                                 <InsertImageModal onClick={onClick} />
-                        </>) : (<button className='btn btn-outline-secondary border-0' disabled={item.disabled} title={item.title} data-bs-toggle="button"
+                            </>) : (<button className='btn btn-outline-secondary border-0' disabled={item.id === RichTextAction.Undo ? !canUndo : item.id === RichTextAction.Redo ? !canRedo : true} title={item.title} data-bs-toggle="button"
                             onClick={() => handleToolbarSelect(item)}> <i className={item.icon}></i> </button>)
                         )
                     )}
                 </div>
             ))}
-
         </div>
     );
 }

@@ -8,23 +8,18 @@ const ResizableImage = ({ src, altText, width, height }: { src: string, altText:
 
     return (
 
-        <ResizableBox
-            width={typeof defaultWidth === 'number' ? defaultWidth : 300}
-            height={typeof defaultHeight === 'number' ? defaultHeight : 200}
-            lockAspectRatio
-            resizeHandles={['se']}  // Handles resizing from the bottom-right corner
-            minConstraints={[50, 50]}  // Minimum size
-            maxConstraints={[1000, 1000]}  // Maximum size
-        >
+        <ResizableBox lockAspectRatio resizeHandles={['se']} minConstraints={[50, 50]}>
             <Image
                 src={src}
                 alt={altText}
                 width={typeof defaultWidth === 'number' ? defaultWidth : 300}
                 height={typeof defaultHeight === 'number' ? defaultHeight : 200}
-                layout="responsive"  // Ensures responsive behavior
-                objectFit="contain"  // Contains within bounds
+                layout="responsive"
+                objectFit="contain"  
                 loading="lazy"
+                unoptimized={true}
             />
+
         </ResizableBox>
     );
 };

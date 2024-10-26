@@ -24,7 +24,7 @@ import { ImageNode } from './nodes/ImageNode';
 const Editor = () => {
     const [isReadOnly, setIsReadOnly] = useState(false); 
     const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
-    console.log('isLinkEditMode',isLinkEditMode)
+    // console.log('isLinkEditMode',isLinkEditMode)
 
     const placeholder = '내용을 기술하세요...';
 

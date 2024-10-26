@@ -1,8 +1,6 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $createNodeSelection, $getRoot, $getSelection, $insertNodes, $setSelection } from 'lexical';
 import React, { useState } from 'react'
 // import CustomImageNode, { $createCustomImageNode } from '../nodes/CustomImageNode';
-import { $createImageNode } from '../nodes/ImageNode';
 import { InsertImagePayload } from '../plugins/ToolbarPlugin';
 
 
@@ -97,7 +95,7 @@ const InsertImageFile = ({ onClick }: { onClick: (payload: InsertImagePayload) =
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h1 className="modal-title fs-5" id="insertImageUrlTitle">그림파일 삽입</h1>
+                        <h1 className="modal-title fs-5" id="insertImageUrlTitle">사진파일 삽입</h1>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
@@ -125,11 +123,11 @@ const InsertImageFile = ({ onClick }: { onClick: (payload: InsertImagePayload) =
                                             className="form-control"
                                             id="altTextInput"
                                             value={altText}
-                                            placeholder='그림 설명'
+                                            placeholder='사진 설명'
                                             onChange={handleAltTextChange}
                                             required
                                         />
-                                        <div className="form-text ms-2">그림 설명을 입력하세요.</div>
+                                        <div className="form-text ms-2">사진 설명을 입력하세요.</div>
                                     </div>
 
                                 </div>

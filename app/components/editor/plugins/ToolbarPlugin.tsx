@@ -26,9 +26,9 @@ interface LexicalToolbarProps {
     setIsLinkEditMode: Dispatch<boolean>,
 }
 
-const TRANSPARENT_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-const img = document.createElement('img');
-img.src = TRANSPARENT_IMAGE;
+// const TRANSPARENT_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+// const img = document.createElement('img');
+// img.src = TRANSPARENT_IMAGE;
 
 function $onDragStart(event: DragEvent): boolean {
     const node = $getImageNodeInSelection();
@@ -39,24 +39,24 @@ function $onDragStart(event: DragEvent): boolean {
     if (!dataTransfer) {
         return false;
     }
-    dataTransfer.setData('text/plain', '_');
-    dataTransfer.setDragImage(img, 0, 0);
-    dataTransfer.setData(
-        'application/x-lexical-drag',
-        JSON.stringify({
-            data: {
-                altText: node.__altText,
-                caption: node.__caption,
-                height: node.__height,
-                key: node.getKey(),
-                maxWidth: node.__maxWidth,
-                showCaption: node.__showCaption,
-                src: node.__src,
-                width: node.__width,
-            },
-            type: 'image',
-        }),
-    );
+    // dataTransfer.setData('text/plain', '_');
+    // dataTransfer.setDragImage(img, 0, 0);
+    // dataTransfer.setData(
+    //     'application/x-lexical-drag',
+    //     JSON.stringify({
+    //         data: {
+    //             altText: node.__altText,
+    //             caption: node.__caption,
+    //             height: node.__height,
+    //             key: node.getKey(),
+    //             maxWidth: node.__maxWidth,
+    //             showCaption: node.__showCaption,
+    //             src: node.__src,
+    //             width: node.__width,
+    //         },
+    //         type: 'image',
+    //     }),
+    // );
 
     return true;
 }
@@ -165,7 +165,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
     const [blockType, setBlockType] = useState<keyof typeof actionName>(RichTextAction.Paragraph);
     const [isRTL, setIsRTL] = useState(false);
     const [selectedElementKey, setSelectedElementKey] = useState<NodeKey | null>(null,);
-    // const [selectedRichTextAction, setSelectedRichTextAction] = useState<RichTextAction | null>(null)
+    const [selectedRichTextAction, setSelectedRichTextAction] = useState<RichTextAction | null>(null)
     const [elementFormat, setElementFormat] = useState<ElementFormatType>('left');
     const [isEditable, setIsEditable] = useState(() => editor.isEditable());
     const [canUndo, setCanUndo] = useState(false);
@@ -175,21 +175,20 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
 
     const $updateDropdownItemForBlockFormatItmes = useCallback((action: RichTextAction) => {
         const updatedToolbarData = toolbarData.map(item => ({ ...item, dropdownItems: item.dropdownItems?.map(dropdown => dropdown.id === action ? { ...dropdown, active: true } : { ...dropdown, active: false }) }));
-        // console.log('dropdownItems: ', updatedToolbarData[4].dropdownItems);
-
         const si = updatedToolbarData[4].dropdownItems?.find(item => item.id === action);
         if (si) {
             setSelectedBlockType(si)
         }
     }, [toolbarData]);
 
+
     //updateToolbar
     const $updateToolbar = useCallback(() => {
-        console.log('updateToolbar')
+
 
         const selection = $getSelection();
-
         if ($isRangeSelection(selection)) {
+            // console.log('selection: ', selection)
             if (activeEditor !== editor && $isEditorIsNestedEditor(activeEditor)) {
                 // const rootElement = activeEditor.getRootElement();
                 // setIsImageCaption(!!rootElement?.parentElement?.classList.contains('image-caption-container',),);
@@ -210,14 +209,18 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
             }
 
             const elementKey = element.getKey();
+            // console.log('elementKey:', elementKey)
             const elementDOM = activeEditor.getElementByKey(elementKey);
+            // console.log('elementDOM:', elementDOM)
 
             setIsRTL($isParentElementRTL(selection));
-            // console.log('isRTL', isRTL)
+            // console.log('isRTL:', isRTL)
 
             // Update links
             const node = getSelectedNode(selection);
+            // console.log('node: ', node)
             const parent = node.getParent();
+            // console.log('parent: ', parent)
             if ($isLinkNode(parent) || $isLinkNode(node)) {
                 setIsLink(true);
             } else {
@@ -225,28 +228,30 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
             }
             if (elementDOM !== null) {
                 setSelectedElementKey(elementKey);
-                console.log('selectedElementKey', selectedElementKey)
+                // console.log('selectedElementKey', selectedElementKey)
                 let type;
                 if ($isListNode(element)) {
                     const parentList = $getNearestNodeOfType<ListNode>(anchorNode, ListNode,);
                     type = parentList ? parentList.getListType() : element.getListType();
                     setBlockType(type as keyof typeof actionName);
-                    console.log('type: $isListNode(element)', blockType)
+                    // console.log('type: $isListNode(element)', blockType)
                     // console.log('type:', type)
                 } else {
                     type = $isHeadingNode(element) ? element.getTag() : element.getType();
-                    console.log('type:$isListNode(element) else', type)
+                    // console.log('type:$isListNode(element) else', type)
                     if (type in actionName) {
                         setBlockType(type as keyof typeof actionName);
-                        console.log('blockType:', blockType)
+                        // console.log('blockType:', blockType)
                     }
 
                 }
                 const action = getRichTextAction(type)
+
                 if (action) {
-                    // setSelectedRichTextAction(action)
+                    // console.log('action: ', action)
+                    setSelectedRichTextAction(action)
                     $updateDropdownItemForBlockFormatItmes(action);
-                    console.log('action: ', action)
+
                 }
             }
             let matchingParent;
@@ -259,9 +264,9 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
             setElementFormat($isElementNode(matchingParent) ? matchingParent.getFormatType() : $isElementNode(node) ? node.getFormatType() : parent?.getFormatType() || 'left',);
         }
         if ($isRangeSelection(selection)) {
-            console.log('selection: ', selection)
+            // console.log('selection: ', selection)
         }
-    }, [$updateDropdownItemForBlockFormatItmes, activeEditor, blockType, editor, selectedElementKey]);
+    }, [$updateDropdownItemForBlockFormatItmes, activeEditor, editor]);
 
     // editor.setEditable(!isReadOnly); /
     useEffect(() => {
@@ -279,7 +284,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
 
     //useEffect mergeRegister: insert image command
     useEffect(() => {
-        console.log('insert image command: ')
+        // console.log('insert image command: ')
         if (!editor.hasNodes([ImageNode])) {
             throw new Error('ImagesPlugin: ImageNode not registered on editor');
         }
@@ -319,7 +324,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
 
     //register SELECTION_CHANGE_COMMAND setActiveEditor updateToolbar
     useEffect(() => {
-        console.log('useEffect SELECTION_CHANGE_COMMAND: ')
+        // console.log('useEffect SELECTION_CHANGE_COMMAND: ')
         return editor.registerCommand(
             SELECTION_CHANGE_COMMAND,
             (_payload, newEditor) => {
@@ -333,7 +338,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
 
     //useEffect activeEditor.getEditorState() updateToolbar
     useEffect(() => {
-        console.log('useEffect activeEditor.getEditorState(): ')
+        // console.log('useEffect activeEditor.getEditorState(): ')
         activeEditor.getEditorState().read(() => {
             $updateToolbar();
         });
@@ -341,7 +346,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
 
     //useEffect mergeRegister: setIsEditable updateToolbar CAN_UNDO_COMMAND CAN_REDO_COMMAND
     useEffect(() => {
-        console.log('useEffect mergeRegister: ')
+        // console.log('useEffect mergeRegister: ')
         return mergeRegister(
             editor.registerEditableListener((editable) => {
                 setIsEditable(editable);
@@ -372,7 +377,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
 
     //useEffect activeEditor.registerCommand: KEY_MODIFIER_COMMAND
     useEffect(() => {
-        console.log('useEffect activeEditor.registerCommand: ')
+        // console.log('useEffect activeEditor.registerCommand: ')
         return activeEditor.registerCommand(
             KEY_MODIFIER_COMMAND,
             (payload) => {
@@ -406,7 +411,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
     }, [editor]);
 
     useEffect(() => {
-        console.log('useEffect activeEditor.registerCommand: ')
+        // console.log('useEffect activeEditor.registerCommand: ')
         return activeEditor.registerCommand(
             KEY_MODIFIER_COMMAND,
             (payload) => {
@@ -440,7 +445,6 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
                 );
                 setToolbarData(td);
                 activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
-
                 break;
             }
             case RichTextAction.Redo: {
@@ -527,17 +531,17 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
             }
             case RichTextAction.Image: {
                 console.log('RichTextAction.Image blockType: ', blockType)
-                // activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
+                // activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, undefined);
                 break;
             }
             case RichTextAction.InlineImage: {
                 console.log('RichTextAction.InlineImage blockType:', blockType)
-                activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
+                // activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
                 break;
             }
             case RichTextAction.Column: {
                 console.log('RichTextAction.Column blockType:', blockType)
-                activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
+                // activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
                 break;
             }
             case RichTextAction.YTVideo: {
@@ -571,8 +575,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
 
     return (
         <div>
-
-            <Toolbar toolbarData={toolbarData} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} onClick={onClick} />
+            <Toolbar toolbarData={toolbarData} canUndo={canUndo} canRedo={canRedo} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} onClick={onClick} />
         </div>
 
     )
