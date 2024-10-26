@@ -1,7 +1,5 @@
 import { $getNodeByKey, $getSelection, $isNodeSelection, $isRangeSelection, $setSelection, BaseSelection, CLICK_COMMAND, COMMAND_PRIORITY_LOW, createCommand, DRAGSTART_COMMAND, KEY_BACKSPACE_COMMAND, KEY_DELETE_COMMAND, KEY_ENTER_COMMAND, KEY_ESCAPE_COMMAND, LexicalCommand, LexicalEditor, LineBreakNode, NodeKey, ParagraphNode, RootNode, SELECTION_CHANGE_COMMAND, TextNode } from 'lexical';
 import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
-// import { useSharedHistoryContext } from '../context/SharedHistoryContext';
-import Image from 'next/image';
 import { $isImageNode } from './ImageNode';
 import { mergeRegister } from '@lexical/utils';
 import { useSettings } from '../context/SettingsContext';
@@ -10,30 +8,31 @@ import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import ImageResizer from './ImageResizer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import TreeViewPlugin from '../plugins/TreeViewPlugin';
 import { LinkNode } from '@lexical/link';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import ContentEditable from './ContentEditable';
-import BrokenImage from './BrokenImage';
+import './styles.css'
 import LazyImage from './LazyImage';
-export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> = createCommand('RIGHT_CLICK_IMAGE_COMMAND');
+import BrokenImage from './BrokenImage';
+import { useSharedHistoryContext } from '../context/SharedHistoryContext';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 
+export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> = createCommand('RIGHT_CLICK_IMAGE_COMMAND');
 
 interface ImageComponentProps {
     altText: string;
     caption: LexicalEditor;
-    height: 'inherit' | number;
     maxWidth: number;
     nodeKey: NodeKey;
     resizable: boolean;
     showCaption: boolean;
     src: string;
-    width: 'inherit' | number;
     captionsEnabled: boolean;
 }
 
-const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resizable, showCaption, caption, captionsEnabled, }: ImageComponentProps) => {
+const ImageComponent = ({ src, altText, nodeKey, maxWidth, resizable, showCaption, caption, captionsEnabled, }: ImageComponentProps) => {
 
     const imageRef = useRef<null | HTMLImageElement>(null);
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -114,9 +113,7 @@ const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resiza
     );
 
     const onClick = useCallback((payload: MouseEvent) => {
-        console.log('onClick')
         const event = payload;
-
         if (isResizing) {
             return true;
         }
@@ -261,57 +258,33 @@ const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resiza
         setIsResizing(true);
     };
 
-    // const { historyState } = useSharedHistoryContext();
+    const { historyState } = useSharedHistoryContext();
     const { settings: { showNestedEditorTreeView }, } = useSettings();
 
     const draggable = isSelected && $isNodeSelection(selection) && !isResizing;
     const isFocused = isSelected || isResizing;
-    const defaultWidth = width === 'inherit' ? 300 : width;  // Default width if "inherit"
-    const defaultHeight = height === 'inherit' ? 200 : height;  // Default height if "inherit"
+
     return (
         <Suspense fallback={null}>
-            <>
-                <div>{`isSelected: ${isSelected}`}</div>
-                <div>{`load error: ${isLoadError}`}</div>
-                <div>{`showCaption: ${showCaption}`}</div>
-                <div>{`resizable: ${resizable}`}</div>
-                <div>{`className: ${isFocused ? `focused ${$isNodeSelection(selection) ? 'draggable' : ''}` : null}`}</div>
-
-                <div className='image-container' draggable={draggable} onClick={() => onClick}>
-                    <Image ref={imageRef}
-                        src={src}
-                        alt={altText}
-                        width={maxWidth}
-                        height={0}
-                        layout="intrinsic"
-                        loading="lazy"
-                    />
-                    {/* <LazyImage
-                        className={isFocused ? `focused ${$isNodeSelection(selection) ? 'draggable' : ''}` : null}
-                        src={src}
-                        altText={altText}
-                        imageRef={imageRef}
-                        width={width}
-                        height={height}
-                        maxWidth={maxWidth}
-                        onError={() => setIsLoadError(true)}
-                    /> */}
-                    {/* {isLoadError ? (
+            <>               
+                <div className='image-container' draggable={draggable}>
+                    <>
+                    </>
+                    {isLoadError ? (
                         <BrokenImage />
                     ) : (
+
                         <LazyImage
-                            className={isFocused ? `focused ${$isNodeSelection(selection) ? 'draggable' : ''}` : null}
+                                className={isFocused ? `focused ${$isNodeSelection(selection) ? 'draggable' : ''}` : 'image-container'}
                             src={src}
                             altText={altText}
                             imageRef={imageRef}
-                            width={width}
-                            height={height}
-                            maxWidth={maxWidth}
-                            onError={() => setIsLoadError(true)}
-                        />
-                    )} */}
-                </div>
 
+                            maxWidth={maxWidth}
+                                onError={() => setIsLoadError(true)}
+                        />
+                    )}
+                </div>
                 {showCaption && (
                     <div className="image-caption-container">
                         <LexicalNestedComposer
@@ -321,30 +294,14 @@ const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resiza
                                 TextNode,
                                 LineBreakNode,
                                 ParagraphNode,
-                                LinkNode,
-                                // EmojiNode,
-                                // HashtagNode,
-                                // KeywordNode,
+                                LinkNode,                            
                             ]}>
-                            <AutoFocusPlugin />
-                            {/* <MentionsPlugin />
-                            <LinkPlugin />
-                            <EmojisPlugin />
-                            <HashtagPlugin />
-                            <KeywordsPlugin /> */}
-                            {/* {isCollabActive ? (
-                                <CollaborationPlugin
-                                    id={caption.getKey()}
-                                    providerFactory={createWebsocketProvider}
-                                    shouldBootstrap={true}
-                                />
-                            ) : (
-                                <HistoryPlugin externalHistoryState={historyState} />
-                            )} */}
+                            <AutoFocusPlugin />                         
+                            <HistoryPlugin externalHistoryState={historyState} />
                             <RichTextPlugin
                                 contentEditable={
                                     <ContentEditable
-                                        placeholder="Enter a caption..."
+                                        placeholder="사진설명을 넣으세요"
                                         placeholderClassName="ImageNode__placeholder"
                                         className="ImageNode__contentEditable"
                                     />
@@ -355,6 +312,7 @@ const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resiza
                         </LexicalNestedComposer>
                     </div>
                 )}
+
                 {resizable && $isNodeSelection(selection) && isFocused && (
                     <ImageResizer
                         showCaption={showCaption}

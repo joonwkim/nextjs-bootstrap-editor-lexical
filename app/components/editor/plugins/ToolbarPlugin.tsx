@@ -529,11 +529,12 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
                 activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
                 break;
             }
-            case RichTextAction.Image: {
-                console.log('RichTextAction.Image blockType: ', blockType)
-                // activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, undefined);
-                break;
-            }
+            //insert image command  is insertimage modal
+            // case RichTextAction.Image: {
+            //     console.log('RichTextAction.Image blockType: ', blockType)
+            // activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, undefined);
+            //     break;
+            // }
             case RichTextAction.InlineImage: {
                 console.log('RichTextAction.InlineImage blockType:', blockType)
                 // activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
@@ -568,14 +569,13 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
         }
     }
 
-    const onClick = (payload: InsertImagePayload) => {
+    const handleInsertImage = (payload: InsertImagePayload) => {
         activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
-        // onClose();
     };
 
     return (
         <div>
-            <Toolbar toolbarData={toolbarData} canUndo={canUndo} canRedo={canRedo} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} onClick={onClick} />
+            <Toolbar toolbarData={toolbarData} canUndo={canUndo} canRedo={canRedo} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} onClick={handleInsertImage} />
         </div>
 
     )

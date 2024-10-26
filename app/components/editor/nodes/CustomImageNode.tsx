@@ -76,14 +76,6 @@ export class CustomImageNode extends DecoratorNode<JSX.Element> {
 
         // Return the JSX element with the attributes here
         return (
-
-            <ResizableImage
-                src={this.__src}
-                altText={this.__altText}
-                width={this.__width}
-                height={this.__height}
-            />
-
             // <Image
             //     src={this.__src} // Use the src and altText inside the decorate method
             //     alt={this.__altText}
@@ -93,6 +85,12 @@ export class CustomImageNode extends DecoratorNode<JSX.Element> {
             //     unoptimized={true} // Disable optimization, allow any image source
             // //layout="responsive" // for Next.js's optimized layout
             // />
+            (<ResizableImage
+                src={this.__src}
+                altText={this.__altText}
+                width={this.__width}
+                height={this.__height}
+            />)
         );
     }
 }

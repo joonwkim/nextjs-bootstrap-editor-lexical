@@ -34,60 +34,22 @@ const InsertImageFile = ({ onClick }: { onClick: (payload: InsertImagePayload) =
 
         if (file) {
             const src = URL.createObjectURL(file);
-            onClick({ src: src, altText: altText })
-            // const img = new Image();
-            // img.src = src;
-            // img.onload = () => {
-            //     const width = img.width;
-            //     const height = img.height;
-            //     editor.update(() => {
-
-            //         // const root = $getRoot();
-            //         // // const selection = $getSelection();
-            //         // let paragraphNode = $createParagraphNode();
-            //         // const textNode = $createTextNode('Hello world');
-            //         // paragraphNode.append(textNode);
-            //         // root.append(paragraphNode);
-
-            //         const imageNode = $createImageNode({ src, altText, width, height });
-            //         // const imageNode = $createCustomImageNode(src, altText, width, height);
-            //         const selection = $getSelection();
-            //         if (selection) {
-            //             $insertNodes([imageNode]);
-            //             // const nodeSelection = $createNodeSelection();
-            //             // nodeSelection.add(imageNode.getKey());
-            //             // $setSelection(nodeSelection);
-            //         } else {
-            //             // If no selection, append it to the root
-            //             const root = $getRoot();
-            //             root.append(imageNode);
-            //         }
-
-
-            //         // const selection = $getSelection();
-            //         // paragraphNode = $createParagraphNode();
-            //         // textNode = $createTextNode('Hello world 2');
-            //         // paragraphNode.append(textNode);
-            //         // root.append(paragraphNode);
-            //     });
-            // }
+            onClick({ src: src, altText: altText })          
         }
-
         setFile(null)
         setAltText('');
-
         const removeDecoratorListener = editor.registerDecoratorListener(
             (decorators) => {
                 // The editor's decorators object is passed in!
                 console.log(decorators);
             },
         );
-
         // Do not forget to unregister the listener when no longer needed!
         removeDecoratorListener();
     };
 
 
+    // const isButtonDisabled = !file;
     const isButtonDisabled = !file || !altText;
 
     return (
