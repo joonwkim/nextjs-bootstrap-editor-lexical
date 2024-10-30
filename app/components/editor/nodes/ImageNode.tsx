@@ -15,6 +15,7 @@ export interface ImagePayload {
     width?: number;
     captionsEnabled?: boolean;
 }
+
 function isGoogleDocCheckboxImg(img: HTMLImageElement): boolean {
     return (
         img.parentElement != null &&
@@ -42,38 +43,10 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     __maxWidth: number;
     __showCaption: boolean;
     __caption: LexicalEditor;
-    // Captions cannot yet be used within editor cells
     __captionsEnabled: boolean;
-
-    constructor(src: string, altText: string, maxWidth: number, width?: 'inherit' | number, height?: 'inherit' | number, showCaption?: boolean, caption?: LexicalEditor, captionsEnabled?: boolean, key?: NodeKey,) {
-        super(key);
-        this.__src = src;
-        this.__altText = altText;
-        this.__maxWidth = maxWidth;
-        this.__width = width || 'inherit';
-        this.__height = height || 'inherit';
-        this.__showCaption = showCaption || false;
-        this.__caption = caption || createEditor({ nodes: [], });
-        this.__captionsEnabled = captionsEnabled || captionsEnabled === undefined;
-    }
 
     static getType(): string {
         return 'image';
-    }
-    getAltText(): string {
-        return this.__altText;
-    }
-    getSrc(): string {
-        return this.__src;
-    }
-    setWidthAndHeight(width: 'inherit' | number, height: 'inherit' | number,): void {
-        const writable = this.getWritable();
-        writable.__width = width;
-        writable.__height = height;
-    }
-    setShowCaption(showCaption: boolean): void {
-        const writable = this.getWritable();
-        writable.__showCaption = showCaption;
     }
 
     static clone(node: ImageNode): ImageNode {
@@ -89,6 +62,47 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
             nestedEditor.setEditorState(editorState);
         }
         return node;
+    }
+
+    static importDOM(): DOMConversionMap | null {
+        return {
+            img: () => ({
+                conversion: $convertImageElement,
+                priority: 0,
+            }),
+        };
+    }
+
+    constructor(src: string, altText: string, maxWidth: number, width?: 'inherit' | number, height?: 'inherit' | number, showCaption?: boolean, caption?: LexicalEditor, captionsEnabled?: boolean, key?: NodeKey,) {
+        super(key);
+        this.__src = src;
+        this.__altText = altText;
+        this.__maxWidth = maxWidth;
+        this.__width = width || 'inherit';
+        this.__height = height || 'inherit';
+        this.__showCaption = showCaption || false;
+        this.__caption = caption || createEditor({ nodes: [], });
+        this.__captionsEnabled = captionsEnabled || captionsEnabled === undefined;
+    }
+
+    getAltText(): string {
+        return this.__altText;
+    }
+
+    getSrc(): string {
+        return this.__src;
+    }
+
+    setWidthAndHeight(width: 'inherit' | number, height: 'inherit' | number,): void {
+        const writable = this.getWritable();
+        writable.__width = width;
+        writable.__height = height;
+    }
+
+    setShowCaption(showCaption: boolean): void {
+        console.log('setShowCaption')
+        const writable = this.getWritable();
+        writable.__showCaption = showCaption;
     }
 
     exportJSON(): SerializedImageNode {
@@ -114,17 +128,11 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
         }
         return span;
     }
+
     updateDOM(): false {
         return false;
     }
-    static importDOM(): DOMConversionMap | null {
-        return {
-            img: () => ({
-                conversion: $convertImageElement,
-                priority: 0,
-            }),
-        };
-    }
+
     exportDOM(): DOMExportOutput {
         const element = document.createElement('img');
         element.setAttribute('src', this.__src);

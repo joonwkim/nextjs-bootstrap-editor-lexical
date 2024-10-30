@@ -6,9 +6,9 @@ import React, { useState } from 'react'
 import CustomImageNode from '../nodes/CustomImageNode';
 import { $createNodeSelection, $getRoot, $getSelection, $insertNodes, $setSelection } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { InsertImagePayload } from '../plugins/ToolbarPlugin';
+import { InsertImagePayload } from '../plugins/ToolbarPlugin org';
 
-const InsertImageUrl = ({ onClick }: { onClick: (payload: InsertImagePayload) => void, }) => {
+const InsertImageUrlModal = ({ onClick }: { onClick: (payload: InsertImagePayload) => void, }) => {
 
     const [editor] = useLexicalComposerContext();
     const [formData, setFormData] = useState({ url: '', referrer: '' });
@@ -73,14 +73,14 @@ const InsertImageUrl = ({ onClick }: { onClick: (payload: InsertImagePayload) =>
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h1 className="modal-title fs-5" id="insertImageUrlTitle">사진 URL 삽입</h1>
+                        <h1 className="modal-title fs-5" id="insertImageUrlTitle">이미지 URL 삽입</h1>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
                         <div className="container mt-5">
                             <form onSubmit={(handleSubmit)} id='insertImageUrlForm'>
                                 <div className="mb-3 d-flex">
-                                    <label htmlFor="url" className="form-label mt-1 col-3">사진 URL</label>
+                                    <label htmlFor="url" className="form-label mt-1 col-3">이미지 URL</label>
                                     <div className='col-9'>
                                         <input
                                             type="text" // Changed to text for manual validation
@@ -132,4 +132,4 @@ const InsertImageUrl = ({ onClick }: { onClick: (payload: InsertImagePayload) =>
     )
 }
 
-export default InsertImageUrl
+export default InsertImageUrlModal

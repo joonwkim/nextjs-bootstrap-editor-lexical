@@ -12,12 +12,12 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import TreeViewPlugin from '../plugins/TreeViewPlugin';
 import { LinkNode } from '@lexical/link';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
-import ContentEditable from './ContentEditable';
-import './styles.css'
 import LazyImage from './LazyImage';
-import BrokenImage from './BrokenImage';
 import { useSharedHistoryContext } from '../context/SharedHistoryContext';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { KeywordNode } from './KeywordNode';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import './styles.css'
 
 export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> = createCommand('RIGHT_CLICK_IMAGE_COMMAND');
 
@@ -66,13 +66,8 @@ const ImageComponent = ({ src, altText, nodeKey, maxWidth, resizable, showCaptio
         (event: KeyboardEvent) => {
             const latestSelection = $getSelection();
             const buttonElem = buttonRef.current;
-            if (
-                isSelected &&
-                $isNodeSelection(latestSelection) &&
-                latestSelection.getNodes().length === 1
-            ) {
+            if (isSelected && $isNodeSelection(latestSelection) && latestSelection.getNodes().length === 1) {
                 if (showCaption) {
-                    // Move focus into nested editor
                     $setSelection(null);
                     event.preventDefault();
                     caption.focus();
@@ -180,8 +175,6 @@ const ImageComponent = ({ src, altText, nodeKey, maxWidth, resizable, showCaptio
                 DRAGSTART_COMMAND,
                 (event) => {
                     if (event.target === imageRef.current) {
-                        // TODO This is just a temporary workaround for FF to behave like other browsers.
-                        // Ideally, this handles drag & drop too (and all browsers).
                         event.preventDefault();
                         return true;
                     }
@@ -268,18 +261,14 @@ const ImageComponent = ({ src, altText, nodeKey, maxWidth, resizable, showCaptio
         <Suspense fallback={null}>
             <>               
                 <div className='image-container' draggable={draggable}>
-                    <>
-                    </>
                     {isLoadError ? (
-                        <BrokenImage />
+                        <h2 className='text-center'>이미지가 손상되었습니다.</h2>
                     ) : (
-
                         <LazyImage
                                 className={isFocused ? `focused ${$isNodeSelection(selection) ? 'draggable' : ''}` : 'image-container'}
                             src={src}
                             altText={altText}
-                            imageRef={imageRef}
-
+                                imageRef={imageRef}
                             maxWidth={maxWidth}
                                 onError={() => setIsLoadError(true)}
                         />
@@ -294,18 +283,20 @@ const ImageComponent = ({ src, altText, nodeKey, maxWidth, resizable, showCaptio
                                 TextNode,
                                 LineBreakNode,
                                 ParagraphNode,
-                                LinkNode,                            
+                                LinkNode,
+                                KeywordNode,
                             ]}>
-                            <AutoFocusPlugin />                         
+                            <AutoFocusPlugin />
                             <HistoryPlugin externalHistoryState={historyState} />
-                            <RichTextPlugin
-                                contentEditable={
-                                    <ContentEditable
-                                        placeholder="사진설명을 넣으세요"
-                                        placeholderClassName="ImageNode__placeholder"
-                                        className="ImageNode__contentEditable"
-                                    />
-                                }
+                            <RichTextPlugin contentEditable={
+                                <ContentEditable
+                                    className="image-capton-content-input"
+                                    aria-placeholder='Enter a caption'
+                                    placeholder={
+                                        <div className="editor-placeholder">Enter a caption</div>
+                                    }
+                                />
+                            }
                                 ErrorBoundary={LexicalErrorBoundary}
                             />
                             {showNestedEditorTreeView === true ? <TreeViewPlugin /> : null}

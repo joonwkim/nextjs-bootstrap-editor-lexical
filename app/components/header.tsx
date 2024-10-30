@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { Container, Dropdown, Nav, Navbar } from 'react-bootstrap';
+import { Dropdown, Nav, Navbar } from 'react-bootstrap';
 
 interface ThemeProps {
     theme: 'light' | 'dark' | 'auto';

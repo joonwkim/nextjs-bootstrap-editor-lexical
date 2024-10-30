@@ -1,24 +1,22 @@
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import React, { useState } from 'react'
-// import CustomImageNode, { $createCustomImageNode } from '../nodes/CustomImageNode';
-import { InsertImagePayload } from '../plugins/ToolbarPlugin';
+import { InsertImagePayload } from '../plugins/ToolbarPlugin org';
+import './styles.css'
 
-
-const InsertImageFile = ({ onClick }: { onClick: (payload: InsertImagePayload) => void, }) => {
+const InsertImageFileModal = ({ onClick }: { onClick: (payload: InsertImagePayload) => void, }) => {
     const [file, setFile] = useState<File | null>(null);
     const [altText, setAltText] = useState<string>('');
     const [fileError, setFileError] = useState<string>('');
-    const [editor] = useLexicalComposerContext();
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             const selectedFile = event.target.files[0];
             if (selectedFile.size > 1 * 1024 * 1024) {
                 setFileError('File size must be 1 MB or less.');
-                setFile(null); 
+                setFile(null);
             } else {
-                setFileError(''); 
+                setFileError('');
                 setFile(selectedFile);
+                setAltText(selectedFile.name)
             }
         }
     };
@@ -32,50 +30,39 @@ const InsertImageFile = ({ onClick }: { onClick: (payload: InsertImagePayload) =
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (file) {
+        if (file && altText) {
             const src = URL.createObjectURL(file);
-            onClick({ src: src, altText: altText })          
+            onClick({ src: src, altText: altText })
         }
         setFile(null)
         setAltText('');
-        const removeDecoratorListener = editor.registerDecoratorListener(
-            (decorators) => {
-                // The editor's decorators object is passed in!
-                console.log(decorators);
-            },
-        );
-        // Do not forget to unregister the listener when no longer needed!
-        removeDecoratorListener();
     };
 
 
-    // const isButtonDisabled = !file;
-    const isButtonDisabled = !file || !altText;
+    const isButtonDisabled = !file;
+    // const isButtonDisabled = !file || !altText;
 
     return (
         <div className="modal fade" id="insertImageFileModal" aria-hidden="true" aria-labelledby="insertImageUrlTitle" data-bs-backdrop="static" data-bs-target="#staticBackdrop" tabIndex={-1}>
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h1 className="modal-title fs-5" id="insertImageUrlTitle">사진파일 삽입</h1>
+                        <h1 className="modal-title fs-5" id="insertImageUrlTitle">이미지 파일 삽입</h1>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
-                        <div className="container mt-5">
+                        <div className="container">
                             <form onSubmit={handleSubmit} id='insertImageFileForm'>
                                 <div className="mb-3 d-flex">
                                     <label htmlFor="url" className="form-label mt-1 col-3">파일 올리기: </label>
                                     <div className='col-9'>
-                                        <input
-                                            type="file"
-                                            className="form-control"
-                                            id="fileInput"
-                                            accept="image/*"
-                                            onChange={handleFileChange}
-                                            required
-                                        />
+                                        <div className="custom-file">
+                                            <input type="file" className="custom-file-input file-input" id="customFile" onChange={handleFileChange} />
+                                            {file !== null ? (<>    <label className="custom-file-label mt-1" htmlFor="customFile">{file.name}</label></>) : (<>    <label className="custom-file-label mt-1" htmlFor="customFile">이미지 파일을 선택하세요</label></>)}
+                                        </div>
                                         {fileError && <div className="text-danger mt-2">{fileError}</div>}
                                     </div>
+
                                 </div>
                                 <div className="mb-3 d-flex">
                                     <label htmlFor="referrer" className="form-label mt-1 col-3">이미지 설명: </label>
@@ -85,11 +72,11 @@ const InsertImageFile = ({ onClick }: { onClick: (payload: InsertImagePayload) =
                                             className="form-control"
                                             id="altTextInput"
                                             value={altText}
-                                            placeholder='사진 설명'
+                                            placeholder='이미지 설명'
                                             onChange={handleAltTextChange}
                                             required
                                         />
-                                        <div className="form-text ms-2">사진 설명을 입력하세요.</div>
+                                        <div className="form-text ms-2">이미지 설명을 입력하세요.</div>
                                     </div>
 
                                 </div>
@@ -109,4 +96,4 @@ const InsertImageFile = ({ onClick }: { onClick: (payload: InsertImagePayload) =
     )
 }
 
-export default InsertImageFile
+export default InsertImageFileModal

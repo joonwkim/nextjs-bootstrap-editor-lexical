@@ -3,7 +3,7 @@ import React, { Dispatch, useCallback, useEffect, useState } from 'react'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { actionName, DropdownItem, getRichTextAction, RichTextAction, ToolbarItem } from '../../data/toolbarData';
 import Toolbar from '../../controls/toolbar';
-import { $createParagraphNode, $createRangeSelection, $getSelection, $insertNodes, $isElementNode, $isNodeSelection, $isRangeSelection, $isRootOrShadowRoot, $setSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_CRITICAL, COMMAND_PRIORITY_EDITOR, COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW, COMMAND_PRIORITY_NORMAL, createCommand, DRAGOVER_COMMAND, DRAGSTART_COMMAND, DROP_COMMAND, ElementFormatType, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, KEY_MODIFIER_COMMAND, LexicalCommand, LexicalEditor, NodeKey, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from 'lexical';
+import { $createNodeSelection, $createParagraphNode, $createRangeSelection, $getSelection, $insertNodes, $isElementNode, $isNodeSelection, $isRangeSelection, $isRootOrShadowRoot, $setSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_CRITICAL, COMMAND_PRIORITY_EDITOR, COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW, COMMAND_PRIORITY_NORMAL, createCommand, DRAGOVER_COMMAND, DRAGSTART_COMMAND, DROP_COMMAND, ElementFormatType, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, KEY_MODIFIER_COMMAND, LexicalCommand, LexicalEditor, NodeKey, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from 'lexical';
 import { $findMatchingParent, $isEditorIsNestedEditor, $getNearestNodeOfType, mergeRegister, $wrapNodeInElement } from '@lexical/utils'
 import { $isParentElementRTL, $setBlocksType } from '@lexical/selection';
 import { $createHeadingNode, $createQuoteNode, $isHeadingNode } from '@lexical/rich-text';
@@ -15,21 +15,26 @@ import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontal
 import { $createImageNode, $isImageNode, ImageNode, ImagePayload } from '../nodes/ImageNode';
 import { CAN_USE_DOM } from '@lexical/utils'
 import { sanitizeUrl } from '../utils/url';
+import { $createInlineImageNode, InlineImagePayload } from '../nodes/InlineImageNode';
 
 const getDOMSelection = (targetWindow: Window | null): Selection | null => CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
 
 export type InsertImagePayload = Readonly<ImagePayload>;
 export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> = createCommand('INSERT_IMAGE_COMMAND');
+
+export type InsertInlineImagePayload = Readonly<InlineImagePayload>;
+export const INSERT_INLINE_IMAGE_COMMAND: LexicalCommand<InlineImagePayload> = createCommand('INSERT_INLINE_IMAGE_COMMAND');
 interface LexicalToolbarProps {
     isReadOnly: boolean,
     lexicalToolbarData: ToolbarItem[],
     setIsLinkEditMode: Dispatch<boolean>,
 }
 
-// const TRANSPARENT_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-// const img = document.createElement('img');
-// img.src = TRANSPARENT_IMAGE;
+const TRANSPARENT_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+const img = document.createElement('img');
+img.src = TRANSPARENT_IMAGE;
 
+//#region  insert image
 function $onDragStart(event: DragEvent): boolean {
     const node = $getImageNodeInSelection();
     if (!node) {
@@ -39,24 +44,24 @@ function $onDragStart(event: DragEvent): boolean {
     if (!dataTransfer) {
         return false;
     }
-    // dataTransfer.setData('text/plain', '_');
-    // dataTransfer.setDragImage(img, 0, 0);
-    // dataTransfer.setData(
-    //     'application/x-lexical-drag',
-    //     JSON.stringify({
-    //         data: {
-    //             altText: node.__altText,
-    //             caption: node.__caption,
-    //             height: node.__height,
-    //             key: node.getKey(),
-    //             maxWidth: node.__maxWidth,
-    //             showCaption: node.__showCaption,
-    //             src: node.__src,
-    //             width: node.__width,
-    //         },
-    //         type: 'image',
-    //     }),
-    // );
+    dataTransfer.setData('text/plain', '_');
+    dataTransfer.setDragImage(img, 0, 0);
+    dataTransfer.setData(
+        'application/x-lexical-drag',
+        JSON.stringify({
+            data: {
+                altText: node.__altText,
+                caption: node.__caption,
+                height: node.__height,
+                key: node.getKey(),
+                maxWidth: node.__maxWidth,
+                showCaption: node.__showCaption,
+                src: node.__src,
+                width: node.__width,
+            },
+            type: 'image',
+        }),
+    );
 
     return true;
 }
@@ -157,6 +162,7 @@ function getDragSelection(event: DragEvent): Range | null | undefined {
 
     return range;
 }
+//#endregion
 
 const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: LexicalToolbarProps) => {
     const [editor] = useLexicalComposerContext();
@@ -184,7 +190,6 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
 
     //updateToolbar
     const $updateToolbar = useCallback(() => {
-
 
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
@@ -273,88 +278,78 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
         editor.setEditable(!isReadOnly); // Set editor to editable when not in read-only mode
     }, [editor, isReadOnly]);
 
-    // setToolbarData(lexicalToolbarData)
-
-    // console.log('editor:', editor)
     //set toolbar  data
     useEffect(() => {
         // console.log('LexicalToolbar use effect set toolbar  data')
         setToolbarData(lexicalToolbarData)
     }, [lexicalToolbarData])
 
-    //useEffect mergeRegister: insert image command
     useEffect(() => {
-        // console.log('insert image command: ')
         if (!editor.hasNodes([ImageNode])) {
             throw new Error('ImagesPlugin: ImageNode not registered on editor');
         }
-        return mergeRegister(editor.registerCommand<InsertImagePayload>(INSERT_IMAGE_COMMAND, (payload) => {
-            const imageNode = $createImageNode(payload); $insertNodes([imageNode]);
-            if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
-                $wrapNodeInElement(imageNode, $createParagraphNode).selectEnd();
-            }
+        return mergeRegister(
+            editor.registerCommand(
+                SELECTION_CHANGE_COMMAND,
+                (_payload, newEditor) => {
+                    setActiveEditor(newEditor);
+                    $updateToolbar();
+                    return false;
+                },
+                COMMAND_PRIORITY_CRITICAL,
+            ),
 
-            return true;
-        },
-            COMMAND_PRIORITY_EDITOR,
-        ),
-            editor.registerCommand<DragEvent>(
+            activeEditor.registerCommand<InsertImagePayload>(
+                INSERT_IMAGE_COMMAND,
+                (payload) => {
+                    const imageNode = $createImageNode(payload);
+                    $insertNodes([imageNode]);
+                    if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
+                        $wrapNodeInElement(imageNode, $createParagraphNode).selectEnd();
+                    }
+                    return true;
+                }, COMMAND_PRIORITY_EDITOR,),
+
+            activeEditor.registerCommand<InsertInlineImagePayload>(
+                INSERT_INLINE_IMAGE_COMMAND,
+                (payload) => {
+                    // const inlineImageNode = $createInlineImageNode(payload);
+                    // const selection = $createNodeSelection();
+                    // $setSelection(selection);
+                    // selection.insertNodes([inlineImageNode]);
+                    const imageNode = $createInlineImageNode(payload);
+                    $insertNodes([imageNode]);
+                    if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
+                        $wrapNodeInElement(imageNode, $createParagraphNode).selectEnd();
+                    }
+
+                    return true;
+                }, COMMAND_PRIORITY_EDITOR,
+            ),
+
+            activeEditor.registerCommand<DragEvent>(
                 DRAGSTART_COMMAND,
                 (event) => {
                     return $onDragStart(event);
                 },
                 COMMAND_PRIORITY_HIGH,
             ),
-            editor.registerCommand<DragEvent>(
+            activeEditor.registerCommand<DragEvent>(
                 DRAGOVER_COMMAND,
                 (event) => {
                     return $onDragover(event);
                 },
                 COMMAND_PRIORITY_LOW,
             ),
-            editor.registerCommand<DragEvent>(
+            activeEditor.registerCommand<DragEvent>(
                 DROP_COMMAND,
                 (event) => {
-                    return $onDrop(event, editor);
+                    return $onDrop(event, activeEditor);
                 },
                 COMMAND_PRIORITY_HIGH,
             ),
-        );
-    }, [editor]);
-
-    //register SELECTION_CHANGE_COMMAND setActiveEditor updateToolbar
-    useEffect(() => {
-        // console.log('useEffect SELECTION_CHANGE_COMMAND: ')
-        return editor.registerCommand(
-            SELECTION_CHANGE_COMMAND,
-            (_payload, newEditor) => {
-                setActiveEditor(newEditor);
-                $updateToolbar();
-                return false;
-            },
-            COMMAND_PRIORITY_CRITICAL,
-        );
-    }, [editor, $updateToolbar]);
-
-    //useEffect activeEditor.getEditorState() updateToolbar
-    useEffect(() => {
-        // console.log('useEffect activeEditor.getEditorState(): ')
-        activeEditor.getEditorState().read(() => {
-            $updateToolbar();
-        });
-    }, [activeEditor, $updateToolbar]);
-
-    //useEffect mergeRegister: setIsEditable updateToolbar CAN_UNDO_COMMAND CAN_REDO_COMMAND
-    useEffect(() => {
-        // console.log('useEffect mergeRegister: ')
-        return mergeRegister(
-            editor.registerEditableListener((editable) => {
+            activeEditor.registerEditableListener((editable) => {
                 setIsEditable(editable);
-            }),
-            activeEditor.registerUpdateListener(({ editorState }) => {
-                editorState.read(() => {
-                    $updateToolbar();
-                });
             }),
             activeEditor.registerCommand<boolean>(
                 CAN_UNDO_COMMAND,
@@ -372,8 +367,39 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
                 },
                 COMMAND_PRIORITY_CRITICAL,
             ),
+
         );
     }, [$updateToolbar, activeEditor, editor]);
+
+    //to get updated content
+    useEffect(() => {
+        return activeEditor.registerUpdateListener(({ editorState }) => {
+            editorState.read(() => {
+                $updateToolbar();
+            });
+        });
+    }, [$updateToolbar, activeEditor]);
+
+    // useEffect(() => {
+    //     return editor.registerCommand(
+    //         SELECTION_CHANGE_COMMAND,
+    //         (_payload, newEditor) => {
+    //             setActiveEditor(newEditor);
+    //             console.log('updatetoolbar SELECTION_CHANGE_COMMAND: ')
+    //             $updateToolbar();
+    //             return false;
+    //         },
+    //         COMMAND_PRIORITY_CRITICAL,
+    //     );
+    // }, [editor, $updateToolbar]);
+
+    // useEffect(() => {
+    //     activeEditor.getEditorState().read(() => {
+    //         console.log('updatetoolbar getEditorState: ')
+    //         $updateToolbar();
+    //     });
+    // }, [activeEditor, $updateToolbar]);
+
 
     //useEffect activeEditor.registerCommand: KEY_MODIFIER_COMMAND
     useEffect(() => {
@@ -402,13 +428,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
         );
     }, [activeEditor, isLink, setIsLinkEditMode]);
 
-    //to get updated content
-    useEffect(() => {
-        return editor.registerUpdateListener(({ editorState }) => {
-            editorState.read(() => {
-            });
-        });
-    }, [editor]);
+
 
     useEffect(() => {
         // console.log('useEffect activeEditor.registerCommand: ')
@@ -529,31 +549,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
                 activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
                 break;
             }
-            //insert image command  is insertimage modal
-            // case RichTextAction.Image: {
-            //     console.log('RichTextAction.Image blockType: ', blockType)
-            // activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, undefined);
-            //     break;
-            // }
-            case RichTextAction.InlineImage: {
-                console.log('RichTextAction.InlineImage blockType:', blockType)
-                // activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
-                break;
-            }
-            case RichTextAction.Column: {
-                console.log('RichTextAction.Column blockType:', blockType)
-                // activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
-                break;
-            }
-            case RichTextAction.YTVideo: {
-                console.log('RichTextAction.YTVideo blockType: ', blockType)
-                activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
-                break;
-            }
-            case RichTextAction.LeftAlign: {
-                activeEditor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left");
-                break;
-            }
+
             case RichTextAction.CenterAlign: {
                 activeEditor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
                 break;
@@ -572,10 +568,14 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
     const handleInsertImage = (payload: InsertImagePayload) => {
         activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
     };
+    const handleInsertInlineImage = (payload: InlineImagePayload) => {
+        // alert(JSON.stringify(payload))
+        activeEditor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, payload);
+    };
 
     return (
         <div>
-            <Toolbar toolbarData={toolbarData} canUndo={canUndo} canRedo={canRedo} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} onClick={handleInsertImage} />
+            <Toolbar toolbarData={toolbarData} canUndo={canUndo} canRedo={canRedo} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} handleInsertImage={handleInsertImage} handleInsertInlineImage={handleInsertInlineImage} />
         </div>
 
     )

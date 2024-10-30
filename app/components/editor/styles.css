@@ -30,9 +30,11 @@
   /* text-transform: uppercase; */
 }
 
-.editor-paragraph {
+/* .editor-paragraph {
   font-size: 1rem;
 }
+
+*/
 
 .editor-list-ol {
   margin-left: 0px;
@@ -270,7 +272,7 @@
 }
 
 .editor-paragraph {
-  font-size: 1rem;
+  /* font-size: 1rem; */
   margin: 0;
   margin-bottom: 8px;
   position: relative;

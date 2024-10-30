@@ -10,6 +10,7 @@ const EditorTheme = {
   },
   hr: 'editor-hr',
   image: 'editor-image',
+  inlineImage: 'inline-editor-image',
   link: 'editor-link',
   list: {
     checklist: 'editor-checklist',    

@@ -9,7 +9,7 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import EditorTheme from './themes/editorTheme';
-import LexicalToolbar from './plugins/ToolbarPlugin';
+import ToolbarPlugin from './plugins/ToolbarPlugin';
 import { toolbarData } from '../data/toolbarData';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import ReadOnlyPlugin from './plugins/ReadOnlyPlugin';
@@ -20,17 +20,18 @@ import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 // import CustomImageNode from './nodes/CustomImageNode';
 import TreeViewPlugin from './plugins/TreeViewPlugin';
 import { ImageNode } from './nodes/ImageNode';
+import { InlineImageNode } from './nodes/InlineImageNode';
 
 const Editor = () => {
     const [isReadOnly, setIsReadOnly] = useState(false); 
-    const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
+    //const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
     // console.log('isLinkEditMode',isLinkEditMode)
 
     const placeholder = '내용을 기술하세요...';
 
     const editorConfig = {
         namespace: 'React.js Lexical',
-        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode, ImageNode],
+        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode, ImageNode, InlineImageNode],
         editorState:null,
         onError(error: Error) {
             console.log('error: ', error)
@@ -52,7 +53,7 @@ const Editor = () => {
             <div className='editor-container tree-view'>
                 <LexicalComposer initialConfig={editorConfig}>
                     <div className="editor-scroller">
-                        {!isReadOnly && <LexicalToolbar lexicalToolbarData={toolbarData} isReadOnly={isReadOnly} setIsLinkEditMode={setIsLinkEditMode} />}
+                        {!isReadOnly && <ToolbarPlugin lexicalToolbarData={toolbarData} isReadOnly={isReadOnly} setIsLinkEditMode={setIsReadOnly} />}
                         <div className='editor' >
                             <RichTextPlugin
                                 contentEditable={

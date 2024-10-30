@@ -6,8 +6,6 @@ import './globals.css'
 
 export default function Home() {
 
-
-
   return (
     <div className="container">
 
@@ -33,7 +31,7 @@ export default function Home() {
 
       <ParentComponent /> */}
 
-    
+
     </div>
   );
 }
