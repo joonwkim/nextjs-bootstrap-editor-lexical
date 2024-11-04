@@ -1,6 +1,9 @@
 'use client'
 import Editor from "./components/editor/Editor";
 import './globals.css'
+import image from '@/public/images/image.webp'
+import mountains from '@/public/images/mountains.jpg'
+import Image from 'next/image';
 
 
 
@@ -15,7 +18,7 @@ export default function Home() {
       </div>
       <TypingAnimation /> */}
 
-      <Editor />
+
       {/* <LexicalEditor /> */}
 
       {/* <Basic /> */}
@@ -31,6 +34,16 @@ export default function Home() {
 
       <ParentComponent /> */}
 
+      {/* <div>
+        <Image
+          alt="altText"
+          src={image}
+          fill
+          width={100}
+          height={30}
+        />
+      </div> */}
+      <Editor />
 
     </div>
   );

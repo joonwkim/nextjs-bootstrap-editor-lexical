@@ -12,27 +12,69 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import TreeViewPlugin from '../plugins/TreeViewPlugin';
 import { LinkNode } from '@lexical/link';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
-import LazyImage from './LazyImage';
 import { useSharedHistoryContext } from '../context/SharedHistoryContext';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { KeywordNode } from './KeywordNode';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import './styles.css'
+import Image from 'next/image'
+import { Position } from './InlineImageNode';
 
 export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> = createCommand('RIGHT_CLICK_IMAGE_COMMAND');
+interface LazyImageProps {
+    altText: string;
+    className: string;
+    imageRef: { current: null | HTMLImageElement };
+    width?: number;
+    height?: number;
+    maxWidth?: number;
+    src: string;
+    onError: () => void;
+}
+
+function LazyImage({ altText, className, imageRef, width, height, src, onError }: LazyImageProps): JSX.Element {
+
+    return (<>
+        {width && (<> <Image
+            className={className}
+            alt={altText}
+            src={src}
+            fill
+            width={width}
+            height={height}
+            ref={imageRef}
+            draggable="false"
+            onError={onError}
+        /></>)}
+        {!width && (<> <Image
+            className={className}
+            alt={altText}
+            src={src}
+            fill
+            height={height}
+            ref={imageRef}
+            draggable="false"
+            onError={onError}
+        /></>)}
+    </>
+    );
+}
 
 interface ImageComponentProps {
     altText: string;
     caption: LexicalEditor;
-    maxWidth: number;
+    width?: number;
+    height?: number;
+    maxWidth?: number;
     nodeKey: NodeKey;
     resizable: boolean;
     showCaption: boolean;
     src: string;
     captionsEnabled: boolean;
+    position: Position;
 }
 
-const ImageComponent = ({ src, altText, nodeKey, maxWidth, resizable, showCaption, caption, captionsEnabled, }: ImageComponentProps) => {
+const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resizable, showCaption, caption, captionsEnabled }: ImageComponentProps) => {
 
     const imageRef = useRef<null | HTMLImageElement>(null);
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -108,6 +150,7 @@ const ImageComponent = ({ src, altText, nodeKey, maxWidth, resizable, showCaptio
     );
 
     const onClick = useCallback((payload: MouseEvent) => {
+        console.log('payload onClick MouseEvent: ', payload)
         const event = payload;
         if (isResizing) {
             return true;
@@ -225,15 +268,12 @@ const ImageComponent = ({ src, altText, nodeKey, maxWidth, resizable, showCaptio
         editor.update(() => {
             const node = $getNodeByKey(nodeKey);
             if ($isImageNode(node)) {
-                node.setShowCaption(true);
+                node.setShowCaption(altText !== '');
             }
         });
     };
 
-    const onResizeEnd = (
-        nextWidth: 'inherit' | number,
-        nextHeight: 'inherit' | number,
-    ) => {
+    const onResizeEnd = (nextWidth: number, nextHeight: number,) => {
         // Delay hiding the resize bars for click case
         setTimeout(() => {
             setIsResizing(false);
@@ -242,7 +282,8 @@ const ImageComponent = ({ src, altText, nodeKey, maxWidth, resizable, showCaptio
         editor.update(() => {
             const node = $getNodeByKey(nodeKey);
             if ($isImageNode(node)) {
-                node.setWidthAndHeight(nextWidth, nextHeight);
+                console.log('nextWidth, nextHeight:', nextWidth, nextHeight)
+                // node.setWidthAndHeight(nextWidth, nextHeight);
             }
         });
     };
@@ -259,19 +300,30 @@ const ImageComponent = ({ src, altText, nodeKey, maxWidth, resizable, showCaptio
 
     return (
         <Suspense fallback={null}>
-            <>               
+            <>
+                {/* <Image className='image-container'
+                    alt="altText"
+                    src={src}
+                    fill
+                    width={0}
+                    height={0}
+                /> */}
+
                 <div className='image-container' draggable={draggable}>
                     {isLoadError ? (
                         <h2 className='text-center'>이미지가 손상되었습니다.</h2>
-                    ) : (
+                    ) : (<>
                         <LazyImage
-                                className={isFocused ? `focused ${$isNodeSelection(selection) ? 'draggable' : ''}` : 'image-container'}
+                                className={isFocused ? `image-container focused ${$isNodeSelection(selection) ? 'draggable' : ''}` : 'image-container'}
                             src={src}
                             altText={altText}
                                 imageRef={imageRef}
+                                width={width}
+                                height={height}
                             maxWidth={maxWidth}
                                 onError={() => setIsLoadError(true)}
                         />
+                        </>
                     )}
                 </div>
                 {showCaption && (

@@ -1,13 +1,12 @@
 import { DropdownItem, RichTextAction, ToolbarItem } from '../data/toolbarData';
 import ToolbarDropdown from './toolbarDropdown';
 import InsertImageModal from '../editor/modals/InsertImageModal';
-import { InsertImagePayload } from '../editor/plugins/ToolbarPlugin org';
-import './styles.css'
 import InsertColumnsLayoutModal from '../editor/modals/InsertColumnsLayoutModal';
 import InsertInlineImageModal from '../editor/modals/InsertInlineImageModal';
 import InsertTableModal from '../editor/modals/InsertTableModal';
 import InsertYouTubeVideoModal from '../editor/modals/InsertYouTubeVideoModal';
 import { InlineImagePayload } from '../editor/nodes/InlineImageNode';
+import { InsertImagePayload } from '../editor/plugins/ToolbarPlugin';
 import './styles.css'
 interface ToolbarProps {
     toolbarData: ToolbarItem[],

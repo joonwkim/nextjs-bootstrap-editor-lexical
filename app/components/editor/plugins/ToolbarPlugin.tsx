@@ -17,7 +17,7 @@ import { CAN_USE_DOM } from '@lexical/utils'
 import { sanitizeUrl } from '../utils/url';
 import { $createInlineImageNode, InlineImagePayload } from '../nodes/InlineImageNode';
 
-const getDOMSelection = (targetWindow: Window | null): Selection | null => CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
+// const getDOMSelection = (targetWindow: Window | null): Selection | null => CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
 
 export type InsertImagePayload = Readonly<ImagePayload>;
 export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> = createCommand('INSERT_IMAGE_COMMAND');
@@ -30,138 +30,141 @@ interface LexicalToolbarProps {
     setIsLinkEditMode: Dispatch<boolean>,
 }
 
-const TRANSPARENT_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-const img = document.createElement('img');
-img.src = TRANSPARENT_IMAGE;
+// const TRANSPARENT_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+// const img = document.createElement('img');
+// img.src = TRANSPARENT_IMAGE;
 
 //#region  insert image
-function $onDragStart(event: DragEvent): boolean {
-    const node = $getImageNodeInSelection();
-    if (!node) {
-        return false;
-    }
-    const dataTransfer = event.dataTransfer;
-    if (!dataTransfer) {
-        return false;
-    }
-    dataTransfer.setData('text/plain', '_');
-    dataTransfer.setDragImage(img, 0, 0);
-    dataTransfer.setData(
-        'application/x-lexical-drag',
-        JSON.stringify({
-            data: {
-                altText: node.__altText,
-                caption: node.__caption,
-                height: node.__height,
-                key: node.getKey(),
-                maxWidth: node.__maxWidth,
-                showCaption: node.__showCaption,
-                src: node.__src,
-                width: node.__width,
-            },
-            type: 'image',
-        }),
-    );
 
-    return true;
-}
+// function $onDragStart(event: DragEvent): boolean {
+//     console.log('$onDragStart:')
+//     const node = $getImageNodeInSelection();
+//     if (!node) {
+//         return false;
+//     }
+//     const dataTransfer = event.dataTransfer;
+//     if (!dataTransfer) {
+//         return false;
+//     }
+//     dataTransfer.setData('text/plain', '_');
+//     dataTransfer.setDragImage(img, 0, 0);
+//     dataTransfer.setData(
+//         'application/x-lexical-drag',
+//         JSON.stringify({
+//             data: {
+//                 altText: node.__altText,
+//                 caption: node.__caption,
+//                 height: node.__height,
+//                 key: node.getKey(),
+//                 maxWidth: node.__maxWidth,
+//                 showCaption: node.__showCaption,
+//                 src: node.__src,
+//                 width: node.__width,
+//             },
+//             type: 'image',
+//         }),
+//     );
 
-function $onDragover(event: DragEvent): boolean {
-    const node = $getImageNodeInSelection();
-    if (!node) {
-        return false;
-    }
-    if (!canDropImage(event)) {
-        event.preventDefault();
-    }
-    return true;
-}
+//     return true;
+// }
 
-function $onDrop(event: DragEvent, editor: LexicalEditor): boolean {
-    const node = $getImageNodeInSelection();
-    if (!node) {
-        return false;
-    }
-    const data = getDragImageData(event);
-    if (!data) {
-        return false;
-    }
-    event.preventDefault();
-    if (canDropImage(event)) {
-        const range = getDragSelection(event);
-        node.remove();
-        const rangeSelection = $createRangeSelection();
-        if (range !== null && range !== undefined) {
-            rangeSelection.applyDOMRange(range);
-        }
-        $setSelection(rangeSelection);
-        editor.dispatchCommand(INSERT_IMAGE_COMMAND, data);
-    }
-    return true;
-}
+// function $onDragover(event: DragEvent): boolean {
+//     const node = $getImageNodeInSelection();
+//     if (!node) {
+//         return false;
+//     }
+//     if (!canDropImage(event)) {
+//         event.preventDefault();
+//     }
+//     return true;
+// }
 
-function $getImageNodeInSelection(): ImageNode | null {
-    const selection = $getSelection();
-    if (!$isNodeSelection(selection)) {
-        return null;
-    }
-    const nodes = selection.getNodes();
-    const node = nodes[0];
-    return $isImageNode(node) ? node : null;
-}
+// function $onDrop(event: DragEvent, editor: LexicalEditor): boolean {
+//     const node = $getImageNodeInSelection();
+//     if (!node) {
+//         return false;
+//     }
+//     const data = getDragImageData(event);
+//     if (!data) {
+//         return false;
+//     }
+//     event.preventDefault();
+//     if (canDropImage(event)) {
+//         const range = getDragSelection(event);
+//         node.remove();
+//         const rangeSelection = $createRangeSelection();
+//         if (range !== null && range !== undefined) {
+//             rangeSelection.applyDOMRange(range);
+//         }
+//         $setSelection(rangeSelection);
+//         editor.dispatchCommand(INSERT_IMAGE_COMMAND, data);
+//     }
+//     return true;
+// }
 
-function getDragImageData(event: DragEvent): null | InsertImagePayload {
-    const dragData = event.dataTransfer?.getData('application/x-lexical-drag');
-    if (!dragData) {
-        return null;
-    }
-    const { type, data } = JSON.parse(dragData);
-    if (type !== 'image') {
-        return null;
-    }
+// function $getImageNodeInSelection(): ImageNode | null {
+//     const selection = $getSelection();
+//     if (!$isNodeSelection(selection)) {
+//         return null;
+//     }
+//     const nodes = selection.getNodes();
+//     const node = nodes[0];
+//     return $isImageNode(node) ? node : null;
+// }
 
-    return data;
-}
+// function getDragImageData(event: DragEvent): null | InsertImagePayload {
+//     const dragData = event.dataTransfer?.getData('application/x-lexical-drag');
+//     if (!dragData) {
+//         return null;
+//     }
+//     const { type, data } = JSON.parse(dragData);
+//     if (type !== 'image') {
+//         return null;
+//     }
 
-declare global {
-    interface DragEvent {
-        rangeOffset?: number;
-        rangeParent?: Node;
-    }
-}
+//     return data;
+// }
 
-function canDropImage(event: DragEvent): boolean {
-    const target = event.target;
-    return !!(
-        target &&
-        target instanceof HTMLElement &&
-        !target.closest('code, span.editor-image') &&
-        target.parentElement &&
-        target.parentElement.closest('div.ContentEditable__root')
-    );
-}
+// declare global {
+//     interface DragEvent {
+//         rangeOffset?: number;
+//         rangeParent?: Node;
+//     }
+// }
 
-function getDragSelection(event: DragEvent): Range | null | undefined {
-    let range;
-    const target = event.target as null | Element | Document;
-    const targetWindow =
-        target == null
-            ? null
-            : target.nodeType === 9
-                ? (target as Document).defaultView
-                : (target as Element).ownerDocument.defaultView;
-    const domSelection = getDOMSelection(targetWindow);
-    if (document.caretRangeFromPoint) {
-        range = document.caretRangeFromPoint(event.clientX, event.clientY);
-    } else if (event.rangeParent && domSelection !== null) {
-        domSelection.collapse(event.rangeParent, event.rangeOffset || 0);
-        range = domSelection.getRangeAt(0);
-    } else {
-        throw Error(`Cannot get the selection when dragging`);
-    }
+// function canDropImage(event: DragEvent): boolean {
+//     const target = event.target;
+//     return !!(
+//         target &&
+//         target instanceof HTMLElement &&
+//         !target.closest('code, span.editor-image') &&
+//         target.parentElement &&
+//         target.parentElement.closest('div.ContentEditable__root')
+//     );
+// }
 
-    return range;
-}
+// function getDragSelection(event: DragEvent): Range | null | undefined {
+//     let range;
+//     const target = event.target as null | Element | Document;
+//     const targetWindow =
+//         target == null
+//             ? null
+//             : target.nodeType === 9
+//                 ? (target as Document).defaultView
+//                 : (target as Element).ownerDocument.defaultView;
+//     const domSelection = getDOMSelection(targetWindow);
+//     if (document.caretRangeFromPoint) {
+//         range = document.caretRangeFromPoint(event.clientX, event.clientY);
+//     } else if (event.rangeParent && domSelection !== null) {
+//         domSelection.collapse(event.rangeParent, event.rangeOffset || 0);
+//         range = domSelection.getRangeAt(0);
+//     } else {
+//         throw Error(`Cannot get the selection when dragging`);
+//     }
+
+//     return range;
+// }
+
 //#endregion
 
 const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: LexicalToolbarProps) => {
@@ -278,6 +281,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
         editor.setEditable(!isReadOnly); // Set editor to editable when not in read-only mode
     }, [editor, isReadOnly]);
 
+
     //set toolbar  data
     useEffect(() => {
         // console.log('LexicalToolbar use effect set toolbar  data')
@@ -302,6 +306,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
             activeEditor.registerCommand<InsertImagePayload>(
                 INSERT_IMAGE_COMMAND,
                 (payload) => {
+                    // console.log('payload: ', payload)
                     const imageNode = $createImageNode(payload);
                     $insertNodes([imageNode]);
                     if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
@@ -317,6 +322,8 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
                     // const selection = $createNodeSelection();
                     // $setSelection(selection);
                     // selection.insertNodes([inlineImageNode]);
+
+                    // console.log('payload: ', payload)
                     const imageNode = $createInlineImageNode(payload);
                     $insertNodes([imageNode]);
                     if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
@@ -566,6 +573,7 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
     }
 
     const handleInsertImage = (payload: InsertImagePayload) => {
+        // console.log('payload: ', payload)
         activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
     };
     const handleInsertInlineImage = (payload: InlineImagePayload) => {

@@ -1,8 +1,8 @@
 import type { LexicalEditor } from 'lexical';
-
 import { calculateZoomLevel } from '@lexical/utils';
 import * as React from 'react';
 import { useRef } from 'react';
+import './styles.css'
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -10,15 +10,22 @@ function clamp(value: number, min: number, max: number) {
 
 const Direction = { east: 1 << 0, north: 1 << 3, south: 1 << 1, west: 1 << 2, };
 
-export default function ImageResizer({ onResizeStart, onResizeEnd, buttonRef, imageRef, maxWidth, editor, showCaption, setShowCaption, captionsEnabled, }: {
-  editor: LexicalEditor; buttonRef: { current: null | HTMLButtonElement }; imageRef: { current: null | HTMLElement }; maxWidth?: number;
-  onResizeEnd: (width: 'inherit' | number, height: 'inherit' | number) => void; onResizeStart: () => void; setShowCaption: (show: boolean) => void; showCaption: boolean; captionsEnabled: boolean;
-}): JSX.Element {
+interface ImageResizerProps {
+  editor: LexicalEditor;
+  buttonRef: { current: null | HTMLButtonElement };
+  imageRef: { current: null | HTMLElement };
+  maxWidth?: number;
+  onResizeEnd: (width: number, height: number) => void;
+  onResizeStart: () => void;
+  setShowCaption: (show: boolean) => void;
+  showCaption: boolean;
+  captionsEnabled: boolean;
+
+}
+
+export default function ImageResizer({ onResizeStart, onResizeEnd, buttonRef, imageRef, maxWidth, editor, showCaption, setShowCaption, captionsEnabled, }: ImageResizerProps): JSX.Element {
   const controlWrapperRef = useRef<HTMLDivElement>(null);
-  const userSelect = useRef({
-    priority: '',
-    value: 'default',
-  });
+  const userSelect = useRef({ priority: '', value: 'default', });
   const positioningRef = useRef<{ currentHeight: 'inherit' | number; currentWidth: 'inherit' | number; direction: number; isResizing: boolean; ratio: number; startHeight: number; startWidth: number; startX: number; startY: number; }>({
     currentHeight: 0, currentWidth: 0, direction: 0, isResizing: false, ratio: 0,
     startHeight: 0,
@@ -26,14 +33,11 @@ export default function ImageResizer({ onResizeStart, onResizeEnd, buttonRef, im
     startX: 0,
     startY: 0,
   });
-
   const editorRootElement = editor.getRootElement();
   const maxWidthContainer = maxWidth ? maxWidth : editorRootElement !== null ? editorRootElement.getBoundingClientRect().width - 20 : 100;
   const maxHeightContainer = editorRootElement !== null ? editorRootElement.getBoundingClientRect().height - 20 : 100;
-
   const minWidth = 100;
   const minHeight = 100;
-
   const setStartCursor = (direction: number) => {
     const ew = direction === Direction.east || direction === Direction.west;
     const ns = direction === Direction.north || direction === Direction.south;
@@ -49,7 +53,8 @@ export default function ImageResizer({ onResizeStart, onResizeEnd, buttonRef, im
       userSelect.current.value = document.body.style.getPropertyValue('-webkit-user-select',);
       userSelect.current.priority = document.body.style.getPropertyPriority('-webkit-user-select',);
       document.body.style.setProperty('-webkit-user-select', `none`, 'important',);
-    }
+    } 
+
   };
 
   const setEndCursor = () => {
@@ -174,7 +179,9 @@ export default function ImageResizer({ onResizeStart, onResizeEnd, buttonRef, im
   };
   return (
     <div ref={controlWrapperRef}>
-      {!showCaption && captionsEnabled && (<button className="image-caption-button" ref={buttonRef} onClick={() => { setShowCaption(!showCaption); }}>켑션 추가</button>)}
+      {/* {`showCaption: ${showCaption}`} */}
+      {showCaption && captionsEnabled && (
+        <button className="image-caption-button" ref={buttonRef} onClick={() => { setShowCaption(!showCaption); }}>켑션 추가</button>)}
       <div className="image-resizer image-resizer-n" onPointerDown={(event) => { handlePointerDown(event, Direction.north); }} />
       <div className="image-resizer image-resizer-ne" onPointerDown={(event) => { handlePointerDown(event, Direction.north | Direction.east); }} />
       <div className="image-resizer image-resizer-e" onPointerDown={(event) => { handlePointerDown(event, Direction.east); }} />

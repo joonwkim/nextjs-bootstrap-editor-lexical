@@ -1,10 +1,26 @@
-// InlineImageNode.ts
 import { $applyNodeReplacement, createEditor, DecoratorNode, DOMConversionMap, DOMConversionOutput, DOMExportOutput, EditorConfig, LexicalEditor, LexicalNode, NodeKey, SerializedEditor, SerializedLexicalNode, Spread } from 'lexical';
 import './styles.css'
-export type Position = 'left' | 'right' | 'full' | undefined;
-export interface InlineImagePayload { altText: string; caption?: LexicalEditor; height?: number; key?: NodeKey; showCaption?: boolean; src: string; width?: number; position?: Position; }
+const ImageComponent = React.lazy(() => import('./ImageComponent'));
 
-import Image from 'next/image';
+export type Position = 'left' | 'right' | 'full' | undefined;
+export interface InlineImagePayload {
+  altText: string;
+  caption?: LexicalEditor;
+  height?: number;
+  key?: NodeKey;
+  showCaption?: boolean;
+  src: string;
+  width?: number;
+  maxWidth?: number;
+  position?: Position;
+  captionsEnabled?: boolean;
+}
+
+// import Image from 'next/image';
+import { Suspense } from 'react';
+// import InlineImageComponent from './InlineImageComponent';
+import React from 'react';
+// import ImageComponent from 'next/image';
 export interface UpdateInlineImagePayload {
   altText?: string;
   showCaption?: boolean;
@@ -19,15 +35,24 @@ function $convertInlineImageElement(domNode: Node): null | DOMConversionOutput {
   }
   return null;
 }
-export type SerializedInlineImageNode = Spread<{ altText: string; caption: SerializedEditor; height?: number; showCaption: boolean; src: string; width?: number; position?: Position; }, SerializedLexicalNode>;
+export type SerializedInlineImageNode = Spread<{ altText: string; caption: SerializedEditor; height?: number; maxWidth?: number; showCaption: boolean; src: string; width?: number; position?: Position; }, SerializedLexicalNode>;
 
 export class InlineImageNode extends DecoratorNode<JSX.Element> {
-  __src: string; __altText: string; __width: 'inherit' | number; __height: 'inherit' | number; __showCaption: boolean; __caption: LexicalEditor; __position: Position; static getType(): string {
-    return 'inline-image';
+  __src: string;
+  __altText: string;
+  __width?: number;
+  __height?: number;
+  __maxWidth?: number;
+  __showCaption: boolean;
+  __caption: LexicalEditor;
+  __position: Position;
+  __captionsEnabled: boolean;
 
+  static getType(): string {
+    return 'inline-image';
   }
 
-  static clone(node: InlineImageNode): InlineImageNode { return new InlineImageNode(node.__src, node.__altText, node.__position, node.__width, node.__height, node.__showCaption, node.__caption, node.__key,); }
+  static clone(node: InlineImageNode): InlineImageNode { return new InlineImageNode(node.__src, node.__altText, node.__position, node.__maxWidth, node.__width, node.__height, node.__showCaption, node.__caption, node.__captionsEnabled, node.__key,); }
 
   static importJSON(serializedNode: SerializedInlineImageNode,): InlineImageNode {
     const { altText, height, width, caption, src, showCaption, position } = serializedNode;
@@ -49,24 +74,26 @@ export class InlineImageNode extends DecoratorNode<JSX.Element> {
     };
   }
 
-  constructor(src: string, altText: string, position: Position, width?: 'inherit' | number, height?: 'inherit' | number, showCaption?: boolean, caption?: LexicalEditor, key?: NodeKey,) {
+  constructor(src: string, altText: string, position: Position, maxWidth?: number, width?: number, height?: number, showCaption?: boolean, caption?: LexicalEditor, captionsEnabled?: boolean, key?: NodeKey,) {
     super(key);
     this.__src = src;
     this.__altText = altText;
-    this.__width = width || 'inherit';
-    this.__height = height || 'inherit';
+    this.__width = width;
+    this.__maxWidth = maxWidth;
+    this.__height = height;
     this.__showCaption = showCaption || false;
     this.__caption = caption || createEditor();
     this.__position = position;
+    this.__captionsEnabled = captionsEnabled || captionsEnabled === undefined;
   }
-
 
   exportDOM(): DOMExportOutput {
     const element = document.createElement('img');
     element.setAttribute('src', this.__src);
     element.setAttribute('alt', this.__altText);
-    element.setAttribute('width', this.__width.toString());
-    element.setAttribute('height', this.__height.toString());
+    element.setAttribute('width', this.__width ? this.__width.toString() : '');
+    element.setAttribute('height', this.__height ? this.__height.toString() : '');
+    console.log('element: ', element)
     return { element };
   }
 
@@ -74,13 +101,13 @@ export class InlineImageNode extends DecoratorNode<JSX.Element> {
     return {
       altText: this.getAltText(),
       caption: this.__caption.toJSON(),
-      height: this.__height === 'inherit' ? 0 : this.__height,
-      position: this.__position,
+      height: this.__height,
+      maxWidth: this.__maxWidth,
       showCaption: this.__showCaption,
       src: this.getSrc(),
-      type: 'inline-image',
+      type: 'image',
       version: 1,
-      width: this.__width === 'inherit' ? 0 : this.__width,
+      width: this.__width,
     };
   }
 
@@ -97,11 +124,12 @@ export class InlineImageNode extends DecoratorNode<JSX.Element> {
     writable.__altText = altText;
   }
 
-  setWidthAndHeight(width: 'inherit' | number, height: 'inherit' | number,): void {
+  setWidthAndHeight(width: number, height: number,): void {
     const writable = this.getWritable();
     writable.__width = width;
     writable.__height = height;
   }
+
 
   getShowCaption(): boolean {
     return this.__showCaption;
@@ -157,22 +185,29 @@ export class InlineImageNode extends DecoratorNode<JSX.Element> {
 
   decorate() {
     return (
-      <div>
-
-        <Image
+      <Suspense fallback={<div>Loading...</div>}>
+        <ImageComponent
           src={this.__src}
-          alt={this.__altText}
-          width={200} // small width to blend with text
-          height={200} // a Height obtained from file metadata       
+          altText={this.__altText}
+          width={this.__width}
+          maxWidth={this.__maxWidth}
+          height={this.__height}
+          nodeKey={this.getKey()}
+          showCaption={this.__showCaption}
+          caption={this.__caption}
+          position={this.__position}
+          captionsEnabled={this.__captionsEnabled}
+          resizable={true}
         />
-      </div>
+      </Suspense>
     );
   }
 }
 
-export function $createInlineImageNode({ altText, position, height, src, width, showCaption, caption, key, }: InlineImagePayload): InlineImageNode {
+export function $createInlineImageNode({ altText, position, height, src, maxWidth, width, showCaption, caption, captionsEnabled, key, }: InlineImagePayload): InlineImageNode {
+  console.log('width', width)
   return $applyNodeReplacement(
-    new InlineImageNode(src, altText, position, width, height, showCaption, caption, key,),
+    new InlineImageNode(src, altText, position, maxWidth, width, height, showCaption, caption, captionsEnabled, key,),
   );
 }
 
