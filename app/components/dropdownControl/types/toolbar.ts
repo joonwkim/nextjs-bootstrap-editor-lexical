@@ -1,5 +1,5 @@
 
-// types/toolbar.ts
+// types/btn-toolbar.ts
 export interface DropdownItem {
     id: number;
     label: string;

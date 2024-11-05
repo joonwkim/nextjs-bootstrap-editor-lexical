@@ -1,5 +1,5 @@
 import React from 'react'
-import { InsertImagePayload } from '../plugins/ToolbarPlugin org'
+import { InsertImagePayload } from '../plugins/ToolbarPlugin'
 import InsertImageUrlModal from './InsertImageUrlModal'
 import InsertImageFileModal from './InsertImageFileModal'
 

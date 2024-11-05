@@ -171,7 +171,10 @@ export default function ImageResizer({ onResizeStart, onResizeEnd, buttonRef, im
       controlWrapper.classList.remove('image-control-wrapper--resizing');
 
       setEndCursor();
-      onResizeEnd(width, height);
+      if (width !== "inherit" || height !== "inherit") {
+        onResizeEnd(Number(width), Number(height));
+      }
+
 
       document.removeEventListener('pointermove', handlePointerMove);
       document.removeEventListener('pointerup', handlePointerUp);
@@ -179,8 +182,7 @@ export default function ImageResizer({ onResizeStart, onResizeEnd, buttonRef, im
   };
   return (
     <div ref={controlWrapperRef}>
-      {/* {`showCaption: ${showCaption}`} */}
-      {showCaption && captionsEnabled && (
+      {!showCaption && captionsEnabled && (
         <button className="image-caption-button" ref={buttonRef} onClick={() => { setShowCaption(!showCaption); }}>켑션 추가</button>)}
       <div className="image-resizer image-resizer-n" onPointerDown={(event) => { handlePointerDown(event, Direction.north); }} />
       <div className="image-resizer image-resizer-ne" onPointerDown={(event) => { handlePointerDown(event, Direction.north | Direction.east); }} />

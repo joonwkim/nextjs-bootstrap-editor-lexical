@@ -5,21 +5,18 @@ import { Position } from '../nodes/InlineImageNode';
 
 const InsertImageFileModal = ({ onClick }: { onClick: (payload: InsertImagePayload) => void, }) => {
     const [file, setFile] = useState<File | null>(null);
-    const [caption, setCaption] = useState<string>('');
+    const [altText, setAltText] = useState<string>('');
     const [fileError, setFileError] = useState<string>('');
     const [imageWidth, setImageWidth] = useState<undefined | number>();
     const [imageHeight, setImageHeight] = useState<undefined | number>();
     const [position, setPosition] = useState<Position>(undefined)
-    // const [showCaption, setShowCaption] = useState<boolean>(false)
-    // const [showImageSize, setShowImageSize] = useState<boolean>(true)
-
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             const selectedFile = event.target.files[0];
             setFileError('');
             setFile(selectedFile);
-            // setCaption(selectedFile.name)
+            // setAltText(selectedFile.name)
         }
 
     };
@@ -29,17 +26,16 @@ const InsertImageFileModal = ({ onClick }: { onClick: (payload: InsertImagePaylo
         // alert('handleSubmit')
         if (file) {
             const src = URL.createObjectURL(file);
-            const payload = { src: src, altText: caption, width: imageWidth, height: imageHeight, position: position }
-            // console.log('payload:', payload)
+            const payload = { src: src, altText: altText, width: imageWidth, height: imageHeight, position: position }
+            console.log('payload:', payload)
             onClick(payload)
         }
         setFile(null)
-        setCaption('');
+        setAltText('');
         setImageWidth(undefined)
         setImageHeight(undefined)
         // alert('handleSubmit')
     };
-
 
     const isButtonDisabled = !file;
 
@@ -59,24 +55,24 @@ const InsertImageFileModal = ({ onClick }: { onClick: (payload: InsertImagePaylo
                                     <div className='col-9'>
                                         <div className="custom-file">
                                             <input type="file" className="custom-file-input file-input" id="inlineCustomFile" onChange={handleFileChange} />
-                                            {file !== null ? (<>    <label className="custom-file-label mt-1" htmlFor="inlineCustomFile">{file.name}</label></>) : (<>    <label className="custom-file-label mt-1" htmlFor="inlineCustomFile">이미지 파일을 선택하세요</label></>)}
+                                            {file !== null ? (<>    <label className="custom-file-label mt-1" htmlFor="inlineCustomFile">{file?.name}</label></>) : (<>    <label className="custom-file-label mt-1" htmlFor="inlineCustomFile">이미지 파일을 선택하세요</label></>)}
                                         </div>
                                         {fileError && <div className="text-danger mt-2">{fileError}</div>}
                                     </div>
 
-                                </div>                              
+                                </div>
                                 <div className="mb-3 d-flex">
-                                    <label htmlFor="caption" className="form-label mt-1 col-3">이미지 설명: </label>
+                                    <label htmlFor="caption" className="form-label mt-1 col-3">이미지 대체 이름: </label>
                                     <div className='col-9'>
                                         <input
                                             id="caption"
                                             type="text"
                                             className="form-control"
-                                            value={caption}
-                                            placeholder='캡션을 입력하세요 '
-                                            onChange={(e) => setCaption(e.target.value)}
+                                            value={altText}
+                                            placeholder='이미지 대체 이름을 입력하세요'
+                                            onChange={(e) => setAltText(e.target.value)}
                                         />
-                                        <div className="form-text ms-2">공란시 이미지만 표출됩니다.</div>
+                                        {/* <div className="form-text ms-2">이미지만 표출됩니다.</div> */}
                                     </div>
                                 </div>
                                 <div className="mb-3 d-flex">

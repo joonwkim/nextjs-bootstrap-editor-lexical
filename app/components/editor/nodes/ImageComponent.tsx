@@ -33,29 +33,82 @@ interface LazyImageProps {
 }
 
 function LazyImage({ altText, className, imageRef, width, height, src, onError }: LazyImageProps): JSX.Element {
+    useEffect(() => {
+
+        const root = document.documentElement;
+        if (root) {
+            if (width && !height) {
+                root.style.setProperty('--image-auto-width', width.toString() + 'px');
+            } else if (height && !width) {
+                root.style.setProperty('--image-auto-height', height.toString() + 'px');
+            }
+
+        }
+        // if (imageRef.current && width) {
+        //     imageRef.current.style.setProperty('--auto-height-maxwidth', width.toString() + 'px');
+        //     console.log('--auto-height-maxwidth')
+        // }
+    }, [height, width])
 
     return (<>
-        {width && (<> <Image
-            className={className}
-            alt={altText}
-            src={src}
-            fill
-            width={width}
-            height={height}
-            ref={imageRef}
-            draggable="false"
-            onError={onError}
-        /></>)}
-        {!width && (<> <Image
-            className={className}
-            alt={altText}
-            src={src}
-            fill
-            height={height}
-            ref={imageRef}
-            draggable="false"
-            onError={onError}
-        /></>)}
+        {width && height && (<>
+            {/* <div>case1</div> */}
+            <Image
+                className={className}
+                alt={altText}
+                src={src}
+                width={width}
+                height={height}
+                ref={imageRef}
+                draggable="false"
+                onError={onError}
+            /></>)}
+
+        {width && !height && (<>
+            {/* <div>case2</div> */}
+            {/* <div>{`width: ${width}`}</div>
+            <div>{`height: ${height}`}</div> */}
+            <div className='image-width'>
+                <Image
+                    className='image-auto-remove'
+                    src={src}
+                    alt={altText}
+                    fill
+                    ref={imageRef}
+                    draggable="false"
+                    onError={onError}
+                />
+            </div>
+        </>)}
+        {!width && height && (<>
+            {/* <div>case3</div> */}
+            {/* <div>{`width: ${width}`}</div>
+            <div>{`height: ${height}`}</div> */}
+            <div className='image-height'>
+                <Image
+                    className='image-auto-override'
+                    src={src}
+                    alt={altText}
+                    fill
+                    ref={imageRef}
+                    draggable="false"
+                    onError={onError}
+                />
+            </div>
+        </>)}
+
+        {!width && !height && (<>
+            {/* <div>case4</div> */}
+            <Image
+                className={className}
+                alt={altText}
+                src={src}
+                fill
+                ref={imageRef}
+                draggable="false"
+                onError={onError}
+            />
+        </>)}
     </>
     );
 }
@@ -73,6 +126,7 @@ interface ImageComponentProps {
     captionsEnabled: boolean;
     position: Position;
 }
+
 
 const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resizable, showCaption, caption, captionsEnabled }: ImageComponentProps) => {
 
@@ -150,7 +204,7 @@ const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resiza
     );
 
     const onClick = useCallback((payload: MouseEvent) => {
-        console.log('payload onClick MouseEvent: ', payload)
+        // console.log('payload onClick MouseEvent: ', payload)
         const event = payload;
         if (isResizing) {
             return true;
@@ -268,7 +322,7 @@ const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resiza
         editor.update(() => {
             const node = $getNodeByKey(nodeKey);
             if ($isImageNode(node)) {
-                node.setShowCaption(altText !== '');
+                node.setShowCaption(true);
             }
         });
     };
@@ -301,13 +355,7 @@ const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resiza
     return (
         <Suspense fallback={null}>
             <>
-                {/* <Image className='image-container'
-                    alt="altText"
-                    src={src}
-                    fill
-                    width={0}
-                    height={0}
-                /> */}
+                {/* <div>{`showCaption: ${showCaption}`}</div> */}
 
                 <div className='image-container' draggable={draggable}>
                     {isLoadError ? (
@@ -344,9 +392,7 @@ const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resiza
                                 <ContentEditable
                                     className="image-capton-content-input"
                                     aria-placeholder='Enter a caption'
-                                    placeholder={
-                                        <div className="editor-placeholder">Enter a caption</div>
-                                    }
+                                    placeholder={<div className="editor-placeholder">이미지 캡션을 입력하세요.</div>}
                                 />
                             }
                                 ErrorBoundary={LexicalErrorBoundary}

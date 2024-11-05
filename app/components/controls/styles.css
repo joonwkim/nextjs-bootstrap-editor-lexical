@@ -1,4 +1,4 @@
-.btn-toolbar .divider{
+.btn-toolbar .divider {
     width: 1px !important;
     height: 30px;
     background-color: #eee;
@@ -6,14 +6,15 @@
 }
 
 .btn-toolbar {
-    /* display: inline-block; */
     cursor: not-allowed;
+    border-bottom: 1px solid #ddd;
 }
 
 .btn-toolbar button:disabled {
     pointer-events: none;
     /* Ensures the button remains disabled */
 }
+
 .btn-outline-secondary.active,
 .btn-outline-secondary:active,
 .btn-outline-secondary:hover {
@@ -24,4 +25,3 @@
     color: #000;
     /* Text color on hover */
 }
-

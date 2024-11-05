@@ -1,11 +1,11 @@
-/* styles/toolbar.module.css */
-.toolbar {
+/* styles/btn-toolbar.module.css */
+.btn-toolbar {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
 }
 
-.toolbar-item {
+.btn-toolbar-item {
     position: relative;
 }
 
