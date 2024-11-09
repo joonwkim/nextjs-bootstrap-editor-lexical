@@ -2,14 +2,14 @@ import { $getNodeByKey, $getSelection, $isNodeSelection, $isRangeSelection, $set
 import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { $isImageNode } from './ImageNode';
 import { mergeRegister } from '@lexical/utils';
-import { useSettings } from '../context/SettingsContext';
+// import { useSettings } from '../context/SettingsContext';
 import { LexicalNestedComposer } from '@lexical/react/LexicalNestedComposer';
 import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import ImageResizer from './ImageResizer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
-import TreeViewPlugin from '../plugins/TreeViewPlugin';
+// import TreeViewPlugin from '../plugins/TreeViewPlugin';
 import { LinkNode } from '@lexical/link';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { useSharedHistoryContext } from '../context/SharedHistoryContext';
@@ -347,7 +347,7 @@ const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resiza
     };
 
     const { historyState } = useSharedHistoryContext();
-    const { settings: { showNestedEditorTreeView }, } = useSettings();
+    // const { settings: { showNestedEditorTreeView }, } = useSettings();
 
     const draggable = isSelected && $isNodeSelection(selection) && !isResizing;
     const isFocused = isSelected || isResizing;
@@ -397,7 +397,7 @@ const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resiza
                             }
                                 ErrorBoundary={LexicalErrorBoundary}
                             />
-                            {showNestedEditorTreeView === true ? <TreeViewPlugin /> : null}
+                            {/* {showNestedEditorTreeView === true ? <TreeViewPlugin /> : null} */}
                         </LexicalNestedComposer>
                     </div>
                 )}

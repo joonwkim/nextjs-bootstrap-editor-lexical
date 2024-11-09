@@ -1,45 +1,48 @@
+import { InsertTableCommandPayload } from '@lexical/table';
 import React, { useState } from 'react'
 
-const InsertTableModal = () => {
-    const [tableRow, setTableRow] = useState<number>(5);
-    const [tableColumn, setTableColumn] = useState<number>(5);
+
+const InsertTableModal = ({ onClick }: { onClick: (payload: InsertTableCommandPayload) => void, }) => {
+    const [rows, setRows] = useState<number>(5);
+    const [columns, setColumns] = useState<number>(5);
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        console.log(event);
+        event.preventDefault();
+        onClick({ columns: columns.toString(), rows: rows.toString() })
     };
-    const isButtonDisabled = tableRow === 0 || tableColumn === 0;
-    return (<div className="modal fade" id="insertTableModal" aria-hidden="true" aria-labelledby="insertinsertTableModalToggleLabel" tabIndex={-1}>
+    const isButtonDisabled = rows === 0 || columns === 0;
+    return (<div className="modal fade" id="insertTableModal" aria-hidden="true" aria-labelledby="insertTableModalToggleLabel" data-bs-target="#staticBackdrop" tabIndex={-1}>
         <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
                 <div className="modal-header">
-                    <h1 className="modal-title fs-4" id="insertinsertTableModalToggleLabel">테이블 삽입</h1>
+                    <h1 className="modal-title fs-5" id="insertTableModalToggleLabel">테이블 삽입</h1>
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body">
                     <div className="container">
-                        <form onSubmit={handleSubmit} id='insertImageFileForm'>
+                        <form onSubmit={handleSubmit} id='insertTableForm'>
                             <div className="mb-3 d-flex">
-                                <label htmlFor="tableRow" className="form-label mt-1 col-3">열(Row): </label>
+                                <label htmlFor="tableColumns" className="form-label mt-1 col-3">행(Column): </label>
                                 <div className='col-9'>
                                     <input
-                                        id="tableRow"
+                                        id="tableColumns"
                                         type="number"
                                         className="form-control"
-                                        value={tableRow}
+                                        value={columns}
                                         placeholder=' '
-                                        onChange={(e) => setTableRow(parseInt(e.target.value))}
+                                        onChange={(e) => setColumns(parseInt(e.target.value))}
                                     />
                                 </div>
                             </div>
                             <div className="mb-3 d-flex">
-                                <label htmlFor="tableColumn" className="form-label mt-1 col-3">행(Column): </label>
+                                <label htmlFor="tableRows" className="form-label mt-1 col-3">열(Row): </label>
                                 <div className='col-9'>
                                     <input
-                                        id="tableColumn"
+                                        id="tableRows"
                                         type="number"
                                         className="form-control"
-                                        value={tableColumn}
+                                        value={rows}
                                         placeholder=' '
-                                        onChange={(e) => setTableColumn(parseInt(e.target.value))}
+                                        onChange={(e) => setRows(parseInt(e.target.value))}
                                     />
                                 </div>
                             </div>
@@ -48,7 +51,7 @@ const InsertTableModal = () => {
                 </div>
                 <div className='modal-footer'>
                     <div className='me-5'>
-                        <button type="submit" className="btn btn-outline-secondary border-0" disabled={isButtonDisabled} form='insertImageFileForm' data-bs-dismiss="modal" >확인</button>
+                        <button type="submit" className="btn btn-outline-secondary border-0" form='insertTableForm' data-bs-dismiss="modal" disabled={isButtonDisabled}>확인</button>
                     </div>
                 </div>
             </div>

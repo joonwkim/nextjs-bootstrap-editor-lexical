@@ -75,3 +75,16 @@ body {
     font-size: smaller;
 }
 
+.test {
+    background-color: var(--table-resizer-background);
+    cursor: var(--table-resizer-cursor);
+    width: 100px;
+    height: 100px;
+    top: 300px;
+    left: 300px;
+}
+
+:root {
+    --table-resizer-background: maroon;
+    --table-resizer-cursor: col-resize;
+}

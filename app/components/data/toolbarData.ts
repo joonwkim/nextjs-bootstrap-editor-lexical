@@ -100,7 +100,7 @@ export const alignFormatItems: DropdownItem[] = [
 ];
 export const insertItems: DropdownItem[] = [
     { name: '수평선', icon: 'bi-hr', active: false, id: RichTextAction.HR },
-    { name: '이미지', icon: 'bi-file-image', active: false, isModal: true, databstarget: '#insertImageFileModal', databstoggle: 'modal', id: RichTextAction.Image },
+    { name: '이미지', icon: 'bi-file-image', active: false, isModal: true, databstarget: '#insertImageModal', databstoggle: 'modal', id: RichTextAction.Image },
     // { name: '인라인 이미지', icon: 'bi-file-image', active: false, isModal: true, databstarget: '#insertInlineImageModal', databstoggle: 'modal', id: RichTextAction.InlineImage },
     { name: '테이블', icon: 'bi-table', active: false, isModal: true, databstarget: '#insertTableModal', databstoggle: 'modal', id: RichTextAction.Table },
     { name: '컬럼 레이아웃', icon: 'bi-layout-three-columns', active: false, isModal: true, databstarget: '#insertColumnsLayoutModal', databstoggle: 'modal', id: RichTextAction.ColumnsLayout },
@@ -123,7 +123,7 @@ export const toolbarData: ToolbarItem[] = [
     { name: '삽입', isDropdown: true, title: '삽입', dropdownItems: insertItems },
     { isDevider: true, id: RichTextAction.Divider },
     { name: '정렬', isDropdown: true, title: '정렬', dropdownItems: alignFormatItems, updateSelectionChange: true },
-    { name: 'Modal', isModal: true, icon: 'bi-file-image', title: 'Modal', databstarget: '#insertImageFileModal', databstoggle: 'modal', id: RichTextAction.Modal },
+    { name: 'Modal', isModal: true, icon: 'bi-file-image', title: 'Modal', databstarget: '#insertImageModal', databstoggle: 'modal', id: RichTextAction.Modal },
     { name: 'Modal', isModal: true, icon: 'bi-file-image', title: 'Modal', databstarget: '#insertInlineImageModal', databstoggle: 'modal', id: RichTextAction.Modal },
     { name: 'Modal', isModal: true, icon: 'bi-table', title: 'Modal', databstarget: '#insertTabbleModal', databstoggle: 'modal', id: RichTextAction.Modal },
     { name: 'Modal', isModal: true, icon: 'bi-layout-three-columns', title: 'Modal', databstarget: '#insertColumnsLayoutModal', databstoggle: 'modal', id: RichTextAction.Modal },

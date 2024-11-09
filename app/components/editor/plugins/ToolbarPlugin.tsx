@@ -1,10 +1,10 @@
 'use client'
-import React, { Dispatch, useCallback, useEffect, useState } from 'react'
+import React, { createContext, Dispatch, useCallback, useContext, useEffect, useState } from 'react'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { actionName, DropdownItem, getRichTextAction, RichTextAction, ToolbarItem } from '../../data/toolbarData';
 import Toolbar from '../../controls/toolbar';
-import { $createNodeSelection, $createParagraphNode, $createRangeSelection, $getSelection, $insertNodes, $isElementNode, $isNodeSelection, $isRangeSelection, $isRootOrShadowRoot, $setSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_CRITICAL, COMMAND_PRIORITY_EDITOR, COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW, COMMAND_PRIORITY_NORMAL, createCommand, DRAGOVER_COMMAND, DRAGSTART_COMMAND, DROP_COMMAND, ElementFormatType, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, KEY_MODIFIER_COMMAND, LexicalCommand, LexicalEditor, NodeKey, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from 'lexical';
-import { $findMatchingParent, $isEditorIsNestedEditor, $getNearestNodeOfType, mergeRegister, $wrapNodeInElement } from '@lexical/utils'
+import { $createNodeSelection, $createParagraphNode, $createRangeSelection, $getSelection, $insertNodes, $isElementNode, $isNodeSelection, $isRangeSelection, $isRootOrShadowRoot, $setSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_CRITICAL, COMMAND_PRIORITY_EDITOR, COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW, COMMAND_PRIORITY_NORMAL, createCommand, DRAGOVER_COMMAND, DRAGSTART_COMMAND, DROP_COMMAND, EditorThemeClasses, ElementFormatType, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, KEY_MODIFIER_COMMAND, Klass, LexicalCommand, LexicalEditor, LexicalNode, NodeKey, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from 'lexical';
+import { $findMatchingParent, $isEditorIsNestedEditor, $getNearestNodeOfType, mergeRegister, $wrapNodeInElement, $insertNodeToNearestRoot } from '@lexical/utils'
 import { $isParentElementRTL, $setBlocksType } from '@lexical/selection';
 import { $createHeadingNode, $createQuoteNode, $isHeadingNode } from '@lexical/rich-text';
 import { $isListNode, INSERT_CHECK_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, ListNode, } from '@lexical/list';
@@ -16,14 +16,33 @@ import { $createImageNode, $isImageNode, ImageNode, ImagePayload } from '../node
 import { CAN_USE_DOM } from '@lexical/utils'
 import { sanitizeUrl } from '../utils/url';
 import { $createInlineImageNode, InlineImagePayload } from '../nodes/InlineImageNode';
+import { $createTableNodeWithDimensions, INSERT_TABLE_COMMAND, InsertTableCommandPayload, TableNode } from '@lexical/table';
 
 // const getDOMSelection = (targetWindow: Window | null): Selection | null => CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
 
 export type InsertImagePayload = Readonly<ImagePayload>;
 export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> = createCommand('INSERT_IMAGE_COMMAND');
 
-export type InsertInlineImagePayload = Readonly<InlineImagePayload>;
-export const INSERT_INLINE_IMAGE_COMMAND: LexicalCommand<InlineImagePayload> = createCommand('INSERT_INLINE_IMAGE_COMMAND');
+// export type InsertInlineImagePayload = Readonly<InlineImagePayload>;
+// export const INSERT_INLINE_IMAGE_COMMAND: LexicalCommand<InlineImagePayload> = createCommand('INSERT_INLINE_IMAGE_COMMAND');
+
+export const INSERT_NEW_TABLE_COMMAND: LexicalCommand<InsertTableCommandPayload> = createCommand('INSERT_NEW_TABLE_COMMAND');
+export type CellEditorConfig = Readonly<{ namespace: string; nodes?: ReadonlyArray<Klass<LexicalNode>>; onError: (error: Error, editor: LexicalEditor) => void; readOnly?: boolean; theme?: EditorThemeClasses; }>;
+
+export type CellContextShape = {
+    cellEditorConfig: null | CellEditorConfig;
+    cellEditorPlugins: null | JSX.Element | Array<JSX.Element>;
+    set: (cellEditorConfig: null | CellEditorConfig, cellEditorPlugins: null | JSX.Element | Array<JSX.Element>,) => void;
+};
+
+export const CellContext = createContext<CellContextShape>({
+    cellEditorConfig: null,
+    cellEditorPlugins: null,
+    set: () => {
+        // Empty
+    },
+});
+
 interface LexicalToolbarProps {
     isReadOnly: boolean,
     lexicalToolbarData: ToolbarItem[],
@@ -181,6 +200,9 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
     const [canRedo, setCanRedo] = useState(false);
     const [isLink, setIsLink] = useState(false);
     const [selectedBlockType, setSelectedBlockType] = useState<DropdownItem | undefined>()
+    const cellContext = useContext(CellContext);
+    // const cellContext = useContext(CellContext);
+
 
     const $updateDropdownItemForBlockFormatItmes = useCallback((action: RichTextAction) => {
         const updatedToolbarData = toolbarData.map(item => ({ ...item, dropdownItems: item.dropdownItems?.map(dropdown => dropdown.id === action ? { ...dropdown, active: true } : { ...dropdown, active: false }) }));
@@ -315,46 +337,46 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
                     return true;
                 }, COMMAND_PRIORITY_EDITOR,),
 
-            activeEditor.registerCommand<InsertInlineImagePayload>(
-                INSERT_INLINE_IMAGE_COMMAND,
-                (payload) => {
-                    // const inlineImageNode = $createInlineImageNode(payload);
-                    // const selection = $createNodeSelection();
-                    // $setSelection(selection);
-                    // selection.insertNodes([inlineImageNode]);
+            // activeEditor.registerCommand<InsertInlineImagePayload>(
+            //     INSERT_INLINE_IMAGE_COMMAND,
+            //     (payload) => {
+            //         // const inlineImageNode = $createInlineImageNode(payload);
+            //         // const selection = $createNodeSelection();
+            //         // $setSelection(selection);
+            //         // selection.insertNodes([inlineImageNode]);
 
-                    // console.log('payload: ', payload)
-                    const imageNode = $createInlineImageNode(payload);
-                    $insertNodes([imageNode]);
-                    if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
-                        $wrapNodeInElement(imageNode, $createParagraphNode).selectEnd();
-                    }
+            //         // console.log('payload: ', payload)
+            //         const imageNode = $createInlineImageNode(payload);
+            //         $insertNodes([imageNode]);
+            //         if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
+            //             $wrapNodeInElement(imageNode, $createParagraphNode).selectEnd();
+            //         }
 
-                    return true;
-                }, COMMAND_PRIORITY_EDITOR,
-            ),
+            //         return true;
+            //     }, COMMAND_PRIORITY_EDITOR,
+            // ),
 
-            activeEditor.registerCommand<DragEvent>(
-                DRAGSTART_COMMAND,
-                (event) => {
-                    return $onDragStart(event);
-                },
-                COMMAND_PRIORITY_HIGH,
-            ),
-            activeEditor.registerCommand<DragEvent>(
-                DRAGOVER_COMMAND,
-                (event) => {
-                    return $onDragover(event);
-                },
-                COMMAND_PRIORITY_LOW,
-            ),
-            activeEditor.registerCommand<DragEvent>(
-                DROP_COMMAND,
-                (event) => {
-                    return $onDrop(event, activeEditor);
-                },
-                COMMAND_PRIORITY_HIGH,
-            ),
+            // activeEditor.registerCommand<DragEvent>(
+            //     DRAGSTART_COMMAND,
+            //     (event) => {
+            //         return $onDragStart(event);
+            //     },
+            //     COMMAND_PRIORITY_HIGH,
+            // ),
+            // activeEditor.registerCommand<DragEvent>(
+            //     DRAGOVER_COMMAND,
+            //     (event) => {
+            //         return $onDragover(event);
+            //     },
+            //     COMMAND_PRIORITY_LOW,
+            // ),
+            // activeEditor.registerCommand<DragEvent>(
+            //     DROP_COMMAND,
+            //     (event) => {
+            //         return $onDrop(event, activeEditor);
+            //     },
+            //     COMMAND_PRIORITY_HIGH,
+            // ),
             activeEditor.registerEditableListener((editable) => {
                 setIsEditable(editable);
             }),
@@ -462,6 +484,28 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
             COMMAND_PRIORITY_NORMAL,
         );
     }, [activeEditor, isLink, setIsLinkEditMode]);
+
+    useEffect(() => {
+        if (!activeEditor.hasNodes([TableNode])) {
+            // invariant(false, 'TablePlugin: TableNode is not registered on editor');
+        }
+
+        // cellContext.set(cellEditorConfig, children);
+
+        return activeEditor.registerCommand<InsertTableCommandPayload>(
+            INSERT_NEW_TABLE_COMMAND,
+            ({ columns, rows, includeHeaders }) => {
+                const tableNode = $createTableNodeWithDimensions(
+                    Number(rows),
+                    Number(columns),
+                    includeHeaders,
+                );
+                $insertNodes([tableNode]);
+                return true;
+            },
+            COMMAND_PRIORITY_EDITOR,
+        );
+    }, [activeEditor]);
 
 
     const handleToolbarSelect = (item: ToolbarItem) => {
@@ -576,14 +620,23 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
         // console.log('payload: ', payload)
         activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
     };
-    const handleInsertInlineImage = (payload: InlineImagePayload) => {
-        // alert(JSON.stringify(payload))
-        activeEditor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, payload);
+    // const handleInsertInlineImage = (payload: InlineImagePayload) => {
+    //     // alert(JSON.stringify(payload))
+    //     activeEditor.dispatchCommand(INSERT_INLINE_IMAGE_COMMAND, payload);
+    // };
+
+    const handleInsertTable = (payload: InsertTableCommandPayload) => {
+
+        // activeEditor.update(() => {
+        //     const tableNode = $createTableNodeWithDimensions(Number(payload.rows), Number(payload.columns), true);
+        //     $insertNodeToNearestRoot(tableNode);
+        // });
+        activeEditor.dispatchCommand(INSERT_TABLE_COMMAND, payload);
     };
 
     return (
         <div>
-            <Toolbar toolbarData={toolbarData} canUndo={canUndo} canRedo={canRedo} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} handleInsertImage={handleInsertImage} handleInsertInlineImage={handleInsertInlineImage} />
+            <Toolbar toolbarData={toolbarData} canUndo={canUndo} canRedo={canRedo} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} handleInsertImage={handleInsertImage} handleInsertTable={handleInsertTable} />
         </div>
 
     )

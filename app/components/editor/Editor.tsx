@@ -20,10 +20,19 @@ import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 // import CustomImageNode from './nodes/CustomImageNode';
 import TreeViewPlugin from './plugins/TreeViewPlugin';
 import { ImageNode } from './nodes/ImageNode';
-import { InlineImageNode } from './nodes/InlineImageNode';
+// import { InlineImageNode } from './nodes/InlineImageNode';
+import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
+// import { useSettings } from './context/SettingsContext';
+import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
+import TableHoverActionsPlugin from './plugins/TableHoverActionsPlugin';
+import AddTableColumn from './plugins/AddTableColumn';
+import { CustomTableNode } from './nodes/CustomTableNode';
+import TableCellResizer from './plugins/TableCellResizer';
 
 const Editor = () => {
-    const [isReadOnly, setIsReadOnly] = useState(false); 
+    // const { settings: { tableCellMerge, tableCellBackgroundColor, }, } = useSettings();
+    // console.log('settings:', tableCellMerge, tableCellBackgroundColor)
+    const [isReadOnly, setIsReadOnly] = useState(false);
     //const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
     // console.log('isLinkEditMode',isLinkEditMode)
 
@@ -31,8 +40,8 @@ const Editor = () => {
 
     const editorConfig = {
         namespace: 'React.js Lexical',
-        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode, ImageNode, InlineImageNode],
-        editorState:null,
+        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode, ImageNode, TableNode, TableRowNode, TableCellNode],
+        editorState: null,
         onError(error: Error) {
             console.log('error: ', error)
             throw error;
@@ -46,7 +55,7 @@ const Editor = () => {
 
     return (
         <div className='editor-shell'>
-            
+
             <button onClick={toggleEditMode}>
                 {isReadOnly ? 'Switch to Edit Mode' : 'Switch to Read-Only'}
             </button>
@@ -73,14 +82,21 @@ const Editor = () => {
                             <ListPlugin />
                             <CheckListPlugin />
                             <HorizontalRulePlugin />
-                            <TreeViewPlugin />
+                            <TablePlugin
+                                hasCellMerge={true}
+                                hasCellBackgroundColor={true}
+                            />
+                            {/* <AddTableColumn /> */}
+                            <TableCellResizer />
+                            <TableHoverActionsPlugin />
+                            {/* <TreeViewPlugin /> */}
                         </div>
                     </div>
                 </LexicalComposer>
             </div>
 
         </div>
-       
+
     );
 }
 

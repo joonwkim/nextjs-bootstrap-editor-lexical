@@ -2,12 +2,13 @@ import { DropdownItem, RichTextAction, ToolbarItem } from '../data/toolbarData';
 import ToolbarDropdown from './toolbarDropdown';
 import InsertImageModal from '../editor/modals/InsertImageModal';
 import InsertColumnsLayoutModal from '../editor/modals/InsertColumnsLayoutModal';
-import InsertInlineImageModal from '../editor/modals/InsertInlineImageModal';
+// import InsertInlineImageModal from '../editor/modals/InsertInlineImageModal';
 import InsertTableModal from '../editor/modals/InsertTableModal';
 import InsertYouTubeVideoModal from '../editor/modals/InsertYouTubeVideoModal';
-import { InlineImagePayload } from '../editor/nodes/InlineImageNode';
-import { InsertImagePayload } from '../editor/plugins/ToolbarPlugin';
+// import { InlineImagePayload } from '../editor/nodes/InlineImageNode';
+import { InsertImagePayload, } from '../editor/plugins/ToolbarPlugin';
 import './styles.css'
+import { InsertTableCommandPayload } from '@lexical/table';
 interface ToolbarProps {
     toolbarData: ToolbarItem[],
     selectedItem: DropdownItem | undefined;
@@ -15,10 +16,11 @@ interface ToolbarProps {
     canRedo: boolean,
     handleToolbarSelect: (item: ToolbarItem) => void,
     handleInsertImage: (payload: InsertImagePayload) => void,
-    handleInsertInlineImage: (payload: InlineImagePayload) => void,
+    // handleInsertInlineImage: (payload: InlineImagePayload) => void,
+    handleInsertTable: (payload: InsertTableCommandPayload) => void
 }
 
-const Toolbar = ({ toolbarData, canUndo, canRedo, selectedItem, handleToolbarSelect, handleInsertImage, handleInsertInlineImage }: ToolbarProps) => {
+const Toolbar = ({ toolbarData, canUndo, canRedo, selectedItem, handleToolbarSelect, handleInsertImage, handleInsertTable }: ToolbarProps) => {
 
     const getDisabled = (item: ToolbarItem) => {
         if (item.id === RichTextAction.Undo) { return !canUndo; }
@@ -62,8 +64,8 @@ const Toolbar = ({ toolbarData, canUndo, canRedo, selectedItem, handleToolbarSel
                 </div>
             ))}
             <InsertImageModal onClick={handleInsertImage} />
-            <InsertInlineImageModal onClick={handleInsertInlineImage} />
-            <InsertTableModal />
+            {/* <InsertInlineImageModal onClick={handleInsertInlineImage} /> */}
+            <InsertTableModal onClick={handleInsertTable} />
             <InsertColumnsLayoutModal />
             <InsertYouTubeVideoModal />
         </div>
