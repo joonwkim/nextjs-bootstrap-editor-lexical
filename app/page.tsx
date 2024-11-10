@@ -24,7 +24,7 @@ export default function Home() {
 
   return (
     <div className="container">
-      <StyleComponent />
+      {/* <StyleComponent /> */}
       {/* <button onClick={handleClick}>Test</button>
       <div className="test" ></div> */}
 

@@ -86,7 +86,7 @@ const Editor = () => {
                                 hasCellMerge={true}
                                 hasCellBackgroundColor={true}
                             />
-                            {/* <AddTableColumn /> */}
+
                             <TableCellResizer />
                             <TableHoverActionsPlugin />
                             {/* <TreeViewPlugin /> */}
