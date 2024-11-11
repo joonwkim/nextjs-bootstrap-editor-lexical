@@ -143,7 +143,7 @@
   text-overflow: ellipsis;
   top: 15px;
   left: 10px;
-  font-size: 15px;
+  font-size: small;
   /* user-select: none; */
   display: inline-block;
   pointer-events: none;
@@ -599,5 +599,16 @@
 }
 
 .editor-tableCellActionButton:hover {
-  background-color: #ddd;
+  background-color: #eee;
+  }
+  
+  .editor-layoutContainer {
+    display: grid;
+    gap: 10px;
+    margin: 10px 0;
+  }
+  
+  .editor-layoutItem {
+    border: 1px solid #ddd;
+    padding: 8px 16px;
 }

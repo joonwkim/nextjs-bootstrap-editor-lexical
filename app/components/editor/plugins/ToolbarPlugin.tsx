@@ -3,7 +3,7 @@ import React, { createContext, Dispatch, useCallback, useContext, useEffect, use
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { actionName, DropdownItem, getRichTextAction, RichTextAction, ToolbarItem } from '../../data/toolbarData';
 import Toolbar from '../../controls/toolbar';
-import { $createNodeSelection, $createParagraphNode, $createRangeSelection, $getSelection, $insertNodes, $isElementNode, $isNodeSelection, $isRangeSelection, $isRootOrShadowRoot, $setSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_CRITICAL, COMMAND_PRIORITY_EDITOR, COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW, COMMAND_PRIORITY_NORMAL, createCommand, DRAGOVER_COMMAND, DRAGSTART_COMMAND, DROP_COMMAND, EditorThemeClasses, ElementFormatType, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, KEY_MODIFIER_COMMAND, Klass, LexicalCommand, LexicalEditor, LexicalNode, NodeKey, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from 'lexical';
+import { $createNodeSelection, $createParagraphNode, $createRangeSelection, $getRoot, $getSelection, $insertNodes, $isElementNode, $isNodeSelection, $isRangeSelection, $isRootOrShadowRoot, $setSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_CRITICAL, COMMAND_PRIORITY_EDITOR, COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW, COMMAND_PRIORITY_NORMAL, createCommand, DRAGOVER_COMMAND, DRAGSTART_COMMAND, DROP_COMMAND, EditorThemeClasses, ElementFormatType, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, KEY_MODIFIER_COMMAND, Klass, LexicalCommand, LexicalEditor, LexicalNode, NodeKey, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from 'lexical';
 import { $findMatchingParent, $isEditorIsNestedEditor, $getNearestNodeOfType, mergeRegister, $wrapNodeInElement, $insertNodeToNearestRoot } from '@lexical/utils'
 import { $isParentElementRTL, $setBlocksType } from '@lexical/selection';
 import { $createHeadingNode, $createQuoteNode, $isHeadingNode } from '@lexical/rich-text';
@@ -17,6 +17,8 @@ import { CAN_USE_DOM } from '@lexical/utils'
 import { sanitizeUrl } from '../utils/url';
 import { $createInlineImageNode, InlineImagePayload } from '../nodes/InlineImageNode';
 import { $createTableNodeWithDimensions, INSERT_TABLE_COMMAND, InsertTableCommandPayload, TableNode } from '@lexical/table';
+import { INSERT_LAYOUT_COMMAND } from './LayoutPlugin';
+import { $createStickyNode } from '../nodes/StickyNode';
 
 // const getDOMSelection = (targetWindow: Window | null): Selection | null => CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
 
@@ -27,6 +29,8 @@ export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> = createCo
 // export const INSERT_INLINE_IMAGE_COMMAND: LexicalCommand<InlineImagePayload> = createCommand('INSERT_INLINE_IMAGE_COMMAND');
 
 export const INSERT_NEW_TABLE_COMMAND: LexicalCommand<InsertTableCommandPayload> = createCommand('INSERT_NEW_TABLE_COMMAND');
+
+
 export type CellEditorConfig = Readonly<{ namespace: string; nodes?: ReadonlyArray<Klass<LexicalNode>>; onError: (error: Error, editor: LexicalEditor) => void; readOnly?: boolean; theme?: EditorThemeClasses; }>;
 
 export type CellContextShape = {
@@ -613,6 +617,14 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
                 activeEditor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");
                 break;
             }
+            case RichTextAction.Sticky: {
+                activeEditor.update(() => {
+                    const root = $getRoot();
+                    const stickyNode = $createStickyNode(0, 0);
+                    root.append(stickyNode);
+                });
+                break;
+            }
         }
     }
 
@@ -633,10 +645,20 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
         // });
         activeEditor.dispatchCommand(INSERT_TABLE_COMMAND, payload);
     };
+    const handleInsertColumnsLayout = (payload: { value: string }) => {
+        // alert(payload.value)
+        // activeEditor.update(() => {
+        //     const tableNode = $createTableNodeWithDimensions(Number(payload.rows), Number(payload.columns), true);
+        //     $insertNodeToNearestRoot(tableNode);
+        // });
+        activeEditor.dispatchCommand(INSERT_LAYOUT_COMMAND, payload.value);
+    };
+
+
 
     return (
         <div>
-            <Toolbar toolbarData={toolbarData} canUndo={canUndo} canRedo={canRedo} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} handleInsertImage={handleInsertImage} handleInsertTable={handleInsertTable} />
+            <Toolbar toolbarData={toolbarData} canUndo={canUndo} canRedo={canRedo} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} handleInsertImage={handleInsertImage} handleInsertTable={handleInsertTable} handleInsertColumnsLayout={handleInsertColumnsLayout} />
         </div>
 
     )

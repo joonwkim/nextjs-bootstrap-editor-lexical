@@ -35,7 +35,6 @@ export enum RichTextAction {
     Modal = 'modal',
     BlockFormatItems = 'blockFormatItems'
 }
-
 export function getRichTextAction(action: string): RichTextAction | undefined {
     if (Object.values(RichTextAction).includes(action as RichTextAction)) {
         return action as RichTextAction;
@@ -52,7 +51,6 @@ export const actionName: { [key in RichTextAction]: string } = Object.keys(RichT
     acc[value] = capitalize(value); // Capitalize the enum value
     return acc;
 }, {} as { [key in RichTextAction]: string });
-
 export interface DropdownItem {
     id?: RichTextAction,
     name?: string;
@@ -77,7 +75,6 @@ export interface ToolbarItem extends DropdownItem {
     databstarget?: string,
     databstoggle?: string,
 }
-
 export const blockFormatItems: DropdownItem[] = [
     { name: '문장', icon: 'bi-text-paragraph', active: true ,id:RichTextAction.Paragraph},
     { name: '대제목', icon: 'bi-type-h1', active: false, id: RichTextAction.H1 },
@@ -129,5 +126,15 @@ export const toolbarData: ToolbarItem[] = [
     { name: 'Modal', isModal: true, icon: 'bi-layout-three-columns', title: 'Modal', databstarget: '#insertColumnsLayoutModal', databstoggle: 'modal', id: RichTextAction.Modal },
     { name: 'Modal', isModal: true, icon: 'bi-youtube', title: 'Modal', databstarget: '#insertYouTubeVideoModal', databstoggle: 'modal', id: RichTextAction.Modal },
 ]
+export interface InsertColumnsLayoutItem {
+    label: string,
+    value: string,
+}
 
-
+export const Layouts: InsertColumnsLayoutItem[] = [
+    { label: '2 컬럼(동일한 폭)', value: '1fr 1fr' },
+    { label: '2 컬럼(25% - 75%)', value: '1fr 3fr' },
+    { label: '3 컬럼(동일한 폭)', value: '1fr 1fr 1fr' },
+    { label: '3 컬럼(25% - 50% - 25%)', value: '1fr 2fr 1fr' },
+    { label: '4 컬럼(동일한 폭)', value: '1fr 1fr 1fr 1fr' },
+]

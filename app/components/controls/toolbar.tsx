@@ -17,10 +17,11 @@ interface ToolbarProps {
     handleToolbarSelect: (item: ToolbarItem) => void,
     handleInsertImage: (payload: InsertImagePayload) => void,
     // handleInsertInlineImage: (payload: InlineImagePayload) => void,
-    handleInsertTable: (payload: InsertTableCommandPayload) => void
+    handleInsertTable: (payload: InsertTableCommandPayload) => void,
+    handleInsertColumnsLayout: (payload: { value: string }) => void,
 }
 
-const Toolbar = ({ toolbarData, canUndo, canRedo, selectedItem, handleToolbarSelect, handleInsertImage, handleInsertTable }: ToolbarProps) => {
+const Toolbar = ({ toolbarData, canUndo, canRedo, selectedItem, handleToolbarSelect, handleInsertImage, handleInsertTable, handleInsertColumnsLayout }: ToolbarProps) => {
 
     const getDisabled = (item: ToolbarItem) => {
         if (item.id === RichTextAction.Undo) { return !canUndo; }
@@ -66,7 +67,7 @@ const Toolbar = ({ toolbarData, canUndo, canRedo, selectedItem, handleToolbarSel
             <InsertImageModal onClick={handleInsertImage} />
             {/* <InsertInlineImageModal onClick={handleInsertInlineImage} /> */}
             <InsertTableModal onClick={handleInsertTable} />
-            <InsertColumnsLayoutModal />
+            <InsertColumnsLayoutModal onClick={handleInsertColumnsLayout} />
             <InsertYouTubeVideoModal />
         </div>
     );

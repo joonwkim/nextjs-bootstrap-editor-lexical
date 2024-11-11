@@ -27,6 +27,8 @@ const EditorTheme = {
   placeholder: 'editor-placeholder',
   quote: 'editor-quote',
   rtl: 'rtl',
+  layoutContainer: 'editor-layoutContainer',
+  layoutItem: 'editor-layoutItem',
   table: 'editor-table',
   tableCell: 'editor-tableCell',
   tableCellActionButton: 'editor-tableCellActionButton',

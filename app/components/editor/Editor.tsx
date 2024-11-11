@@ -25,9 +25,11 @@ import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 // import { useSettings } from './context/SettingsContext';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import TableHoverActionsPlugin from './plugins/TableHoverActionsPlugin';
-import AddTableColumn from './plugins/AddTableColumn';
-import { CustomTableNode } from './nodes/CustomTableNode';
 import TableCellResizer from './plugins/TableCellResizer';
+import { LayoutPlugin } from './plugins/LayoutPlugin';
+import { LayoutContainerNode } from './nodes/LayoutContainerNode';
+import { LayoutItemNode } from './nodes/LayoutItemNode';
+import { StickyNode } from './nodes/StickyNode';
 
 const Editor = () => {
     // const { settings: { tableCellMerge, tableCellBackgroundColor, }, } = useSettings();
@@ -40,7 +42,7 @@ const Editor = () => {
 
     const editorConfig = {
         namespace: 'React.js Lexical',
-        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode, ImageNode, TableNode, TableRowNode, TableCellNode],
+        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode, ImageNode, TableNode, TableRowNode, TableCellNode, LayoutContainerNode, LayoutItemNode, StickyNode],
         editorState: null,
         onError(error: Error) {
             console.log('error: ', error)
@@ -55,7 +57,6 @@ const Editor = () => {
 
     return (
         <div className='editor-shell'>
-
             <button onClick={toggleEditMode}>
                 {isReadOnly ? 'Switch to Edit Mode' : 'Switch to Read-Only'}
             </button>
@@ -86,9 +87,9 @@ const Editor = () => {
                                 hasCellMerge={true}
                                 hasCellBackgroundColor={true}
                             />
-
                             <TableCellResizer />
                             <TableHoverActionsPlugin />
+                            <LayoutPlugin />
                             {/* <TreeViewPlugin /> */}
                         </div>
                     </div>
