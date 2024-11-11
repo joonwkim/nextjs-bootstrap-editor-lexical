@@ -6,7 +6,7 @@ const StyledAddColumnButton = styled.button<PositionProps>`
   background-color: #eee;
   border: 0;
   cursor: pointer;
-  animation: table-controls 0.3s ease forwards;
+  animation: table-controls 0.2s ease forwards;
 
   height: ${(props) => `${props.height}px` || '0px'};
   top: ${(props) => `${props.top}px` || '0px'};
@@ -27,7 +27,6 @@ const StyledAddColumnButton = styled.button<PositionProps>`
     width: 100%;
     height: 100%;
     opacity: 0.4;
-    transition: opacity 0.3s ease;
   }
 
   /* Change background color on hover without hiding the button */
