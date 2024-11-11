@@ -26,7 +26,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { ThemeProvider } from 'styled-components';
-import StyledResizer from './StyledResizer';
+import StyledResizer from '../styledComponents/StyledResizer';
 
 type MousePosition = {
     x: number;

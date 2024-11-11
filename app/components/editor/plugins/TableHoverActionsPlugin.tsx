@@ -17,7 +17,7 @@ import * as React from 'react';
 import { createPortal } from 'react-dom';
 
 import { useDebounce } from './CodeActionMenuPlugin/utils';
-import StyledAddColumnButton from './StyledAddColumnButton';
+import StyledAddColumnButton from '../styledComponents/StyledAddColumnButton';
 
 const BUTTON_WIDTH_PX = 20;
 

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { PositionProps } from "./TableHoverActionsPlugin";
+import { PositionProps } from "../plugins/TableHoverActionsPlugin";
 
 const StyledAddColumnButton = styled.button<PositionProps>`
   position: absolute;
