@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { InlineImagePayload, Position } from '../nodes/InlineImageNode';
 import './styles.css'
 
-const InsertInlineImageModal = ({ onClick }: { onClick: (payload: InlineImagePayload) => void, }) => {
+const InlineImageModal = ({ onClick }: { onClick: (payload: InlineImagePayload) => void, }) => {
     const [file, setFile] = useState<File | null>(null);
     const [altText, setAltText] = useState<string>('');
     const [width, setWidth] = useState<number>(200);
@@ -164,4 +164,4 @@ const InsertInlineImageModal = ({ onClick }: { onClick: (payload: InlineImagePay
 
     )
 }
-export default InsertInlineImageModal
+export default InlineImageModal

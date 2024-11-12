@@ -1,14 +1,12 @@
-import { DropdownItem, RichTextAction, ToolbarItem } from '../data/toolbarData';
+import { DropdownItem, RichTextAction, ToolbarItem } from '../editor/data/toolbarData';
 import ToolbarDropdown from './toolbarDropdown';
-import InsertImageModal from '../editor/modals/InsertImageModal';
-import InsertColumnsLayoutModal from '../editor/modals/InsertColumnsLayoutModal';
-// import InsertInlineImageModal from '../editor/modals/InsertInlineImageModal';
-import InsertTableModal from '../editor/modals/InsertTableModal';
-import InsertYouTubeVideoModal from '../editor/modals/InsertYouTubeVideoModal';
-// import { InlineImagePayload } from '../editor/nodes/InlineImageNode';
+import ImageModal from '../editor/modals/ImageModal';
+import ColumnsLayoutModal from '../editor/modals/ColumnsLayoutModal';
+import TableModal from '../editor/modals/TableModal';
 import { InsertImagePayload, } from '../editor/plugins/ToolbarPlugin';
-import './styles.css'
 import { InsertTableCommandPayload } from '@lexical/table';
+import EmbedYoutubeModal from '../editor/modals/EmbedYoutubeModal';
+import './styles.css'
 interface ToolbarProps {
     toolbarData: ToolbarItem[],
     selectedItem: DropdownItem | undefined;
@@ -19,9 +17,11 @@ interface ToolbarProps {
     // handleInsertInlineImage: (payload: InlineImagePayload) => void,
     handleInsertTable: (payload: InsertTableCommandPayload) => void,
     handleInsertColumnsLayout: (payload: { value: string }) => void,
+    handleEmbedYoutube: (payload: { value: string }) => void,
 }
 
-const Toolbar = ({ toolbarData, canUndo, canRedo, selectedItem, handleToolbarSelect, handleInsertImage, handleInsertTable, handleInsertColumnsLayout }: ToolbarProps) => {
+const Toolbar = ({ toolbarData, canUndo, canRedo, selectedItem, handleToolbarSelect,
+    handleInsertImage, handleInsertTable, handleInsertColumnsLayout, handleEmbedYoutube }: ToolbarProps) => {
 
     const getDisabled = (item: ToolbarItem) => {
         if (item.id === RichTextAction.Undo) { return !canUndo; }
@@ -64,11 +64,10 @@ const Toolbar = ({ toolbarData, canUndo, canRedo, selectedItem, handleToolbarSel
                     )}
                 </div>
             ))}
-            <InsertImageModal onClick={handleInsertImage} />
-            {/* <InsertInlineImageModal onClick={handleInsertInlineImage} /> */}
-            <InsertTableModal onClick={handleInsertTable} />
-            <InsertColumnsLayoutModal onClick={handleInsertColumnsLayout} />
-            <InsertYouTubeVideoModal />
+            <ImageModal onClick={handleInsertImage} />
+            <TableModal onClick={handleInsertTable} />
+            <ColumnsLayoutModal onClick={handleInsertColumnsLayout} />
+            <EmbedYoutubeModal onClick={handleEmbedYoutube} />
         </div>
     );
 }

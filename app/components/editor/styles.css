@@ -612,3 +612,10 @@
     border: 1px solid #ddd;
     padding: 8px 16px;
 }
+/* .editor-embedBlock {
+  user-select: none;
+} */
+
+.editor-embedBlockFocus {
+  outline: 2px solid rgb(60, 132, 244);
+}

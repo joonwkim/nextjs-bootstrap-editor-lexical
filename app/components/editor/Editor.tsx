@@ -10,7 +10,7 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import EditorTheme from './themes/editorTheme';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
-import { toolbarData } from '../data/toolbarData';
+import { toolbarData } from './data/toolbarData';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import ReadOnlyPlugin from './plugins/ReadOnlyPlugin';
 import { ListItemNode, ListNode, } from '@lexical/list';
@@ -30,6 +30,8 @@ import { LayoutPlugin } from './plugins/LayoutPlugin';
 import { LayoutContainerNode } from './nodes/LayoutContainerNode';
 import { LayoutItemNode } from './nodes/LayoutItemNode';
 import { StickyNode } from './nodes/StickyNode';
+import { YouTubeNode } from './nodes/YouTubeNode';
+import YouTubePlugin from './plugins/YouTubePlugin';
 
 const Editor = () => {
     // const { settings: { tableCellMerge, tableCellBackgroundColor, }, } = useSettings();
@@ -42,7 +44,8 @@ const Editor = () => {
 
     const editorConfig = {
         namespace: 'React.js Lexical',
-        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode, ImageNode, TableNode, TableRowNode, TableCellNode, LayoutContainerNode, LayoutItemNode, StickyNode],
+        nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode, ImageNode, TableNode, TableRowNode, TableCellNode,
+            LayoutContainerNode, LayoutItemNode, StickyNode, YouTubeNode],
         editorState: null,
         onError(error: Error) {
             console.log('error: ', error)
@@ -90,6 +93,7 @@ const Editor = () => {
                             <TableCellResizer />
                             <TableHoverActionsPlugin />
                             <LayoutPlugin />
+                            <YouTubePlugin />
                             {/* <TreeViewPlugin /> */}
                         </div>
                     </div>

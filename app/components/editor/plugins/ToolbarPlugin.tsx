@@ -1,9 +1,9 @@
 'use client'
 import React, { createContext, Dispatch, useCallback, useContext, useEffect, useState } from 'react'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { actionName, DropdownItem, getRichTextAction, RichTextAction, ToolbarItem } from '../../data/toolbarData';
+import { actionName, DropdownItem, getRichTextAction, RichTextAction, ToolbarItem } from '../data/toolbarData';
 import Toolbar from '../../controls/toolbar';
-import { $createNodeSelection, $createParagraphNode, $createRangeSelection, $getRoot, $getSelection, $insertNodes, $isElementNode, $isNodeSelection, $isRangeSelection, $isRootOrShadowRoot, $setSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_CRITICAL, COMMAND_PRIORITY_EDITOR, COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW, COMMAND_PRIORITY_NORMAL, createCommand, DRAGOVER_COMMAND, DRAGSTART_COMMAND, DROP_COMMAND, EditorThemeClasses, ElementFormatType, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, KEY_MODIFIER_COMMAND, Klass, LexicalCommand, LexicalEditor, LexicalNode, NodeKey, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from 'lexical';
+import { $createNodeSelection, $createParagraphNode, $createRangeSelection, $getRoot, $getSelection, $insertNodes, $isElementNode, $isNodeSelection, $isRangeSelection, $isRootOrShadowRoot, $setSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, COMMAND_PRIORITY_CRITICAL, COMMAND_PRIORITY_EDITOR, COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW, COMMAND_PRIORITY_NORMAL, createCommand, DRAGOVER_COMMAND, DRAGSTART_COMMAND, DROP_COMMAND, EditorThemeClasses, ElementFormatType, FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, INDENT_CONTENT_COMMAND, KEY_MODIFIER_COMMAND, Klass, LexicalCommand, LexicalEditor, LexicalNode, NodeKey, OUTDENT_CONTENT_COMMAND, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from 'lexical';
 import { $findMatchingParent, $isEditorIsNestedEditor, $getNearestNodeOfType, mergeRegister, $wrapNodeInElement, $insertNodeToNearestRoot } from '@lexical/utils'
 import { $isParentElementRTL, $setBlocksType } from '@lexical/selection';
 import { $createHeadingNode, $createQuoteNode, $isHeadingNode } from '@lexical/rich-text';
@@ -19,6 +19,7 @@ import { $createInlineImageNode, InlineImagePayload } from '../nodes/InlineImage
 import { $createTableNodeWithDimensions, INSERT_TABLE_COMMAND, InsertTableCommandPayload, TableNode } from '@lexical/table';
 import { INSERT_LAYOUT_COMMAND } from './LayoutPlugin';
 import { $createStickyNode } from '../nodes/StickyNode';
+import { INSERT_YOUTUBE_COMMAND } from './YouTubePlugin';
 
 // const getDOMSelection = (targetWindow: Window | null): Selection | null => CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
 
@@ -617,6 +618,14 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
                 activeEditor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");
                 break;
             }
+            case RichTextAction.Indent: {
+                activeEditor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined);
+                break;
+            }
+            case RichTextAction.Outdent: {
+                activeEditor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined);
+                break;
+            }
             case RichTextAction.Sticky: {
                 activeEditor.update(() => {
                     const root = $getRoot();
@@ -653,12 +662,20 @@ const ToolbarPlugin = ({ lexicalToolbarData, isReadOnly, setIsLinkEditMode }: Le
         // });
         activeEditor.dispatchCommand(INSERT_LAYOUT_COMMAND, payload.value);
     };
+    const handleEmbedYoutube = (payload: { value: string }) => {
+        activeEditor.dispatchCommand(INSERT_YOUTUBE_COMMAND, payload.value);
+    };
 
 
 
     return (
         <div>
-            <Toolbar toolbarData={toolbarData} canUndo={canUndo} canRedo={canRedo} handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType} handleInsertImage={handleInsertImage} handleInsertTable={handleInsertTable} handleInsertColumnsLayout={handleInsertColumnsLayout} />
+            <Toolbar toolbarData={toolbarData} canUndo={canUndo} canRedo={canRedo}
+                handleToolbarSelect={handleToolbarSelect} selectedItem={selectedBlockType}
+                handleInsertImage={handleInsertImage} handleInsertTable={handleInsertTable}
+                handleInsertColumnsLayout={handleInsertColumnsLayout}
+                handleEmbedYoutube={handleEmbedYoutube}
+            />
         </div>
 
     )

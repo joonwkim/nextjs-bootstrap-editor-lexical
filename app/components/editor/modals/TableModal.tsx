@@ -2,7 +2,7 @@ import { InsertTableCommandPayload } from '@lexical/table';
 import React, { useState } from 'react'
 
 
-const InsertTableModal = ({ onClick }: { onClick: (payload: InsertTableCommandPayload) => void, }) => {
+const TableModal = ({ onClick }: { onClick: (payload: InsertTableCommandPayload) => void, }) => {
     const [rows, setRows] = useState<number>(5);
     const [columns, setColumns] = useState<number>(5);
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -60,4 +60,4 @@ const InsertTableModal = ({ onClick }: { onClick: (payload: InsertTableCommandPa
 
     )
 }
-export default InsertTableModal
+export default TableModal

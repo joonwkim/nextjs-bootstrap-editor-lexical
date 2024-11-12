@@ -1,9 +1,9 @@
 import React from 'react'
 import { InsertImagePayload } from '../plugins/ToolbarPlugin'
-import InsertImageUrlModal from './InsertImageUrlModal'
-import InsertImageFileModal from './InsertImageFileModal'
+import ImageUrlModal from './ImageUrlModal'
+import ImageFileModal from './ImageFileModal'
 
-const InsertImageModal = ({ onClick }: { onClick: (payload: InsertImagePayload) => void, }) => {
+const ImageModal = ({ onClick }: { onClick: (payload: InsertImagePayload) => void, }) => {
 
     return (<>
         <div className="modal fade" id="insertImageModal" aria-hidden="true" aria-labelledby="insertImageModalToggleLabel" tabIndex={-1}>
@@ -15,7 +15,6 @@ const InsertImageModal = ({ onClick }: { onClick: (payload: InsertImagePayload) 
                     </div>
                     <div className="modal-body my-3">
                         <div className="row g-3">
-                            {/* <button className="btn btn-outline-secondary border-0" data-bs-target="#" data-bs-toggle="modal">샘플이미지 삽입</button> */}
                             <button className="btn btn-outline-secondary border-0" data-bs-target="#insertImageUrlModal" data-bs-toggle="modal">URL 입력</button>
                             <button className="btn btn-outline-secondary border-0" data-bs-target="#insertImageFileModal" data-bs-toggle="modal">파일 입력</button>
                         </div>
@@ -23,11 +22,10 @@ const InsertImageModal = ({ onClick }: { onClick: (payload: InsertImagePayload) 
                 </div>
             </div>
         </div>
-        {/* <InsertSampleImage /> */}
-        <InsertImageUrlModal onClick={onClick} />
-        <InsertImageFileModal onClick={onClick} />
+        <ImageUrlModal onClick={onClick} />
+        <ImageFileModal onClick={onClick} />
     </>
 
     )
 }
-export default InsertImageModal
+export default ImageModal

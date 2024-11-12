@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react';
-import { DropdownItem } from '../data/toolbarData';
+import { DropdownItem } from '../editor/data/toolbarData';
 
 interface ToolbarDropdownProps {
     dropdownItems?: DropdownItem[],

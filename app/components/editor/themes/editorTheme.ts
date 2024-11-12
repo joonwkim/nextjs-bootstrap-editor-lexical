@@ -53,6 +53,9 @@ const EditorTheme = {
     underline: 'editor-text-underline',
     underlineStrikethrough: 'editor-text-underlineStrikethrough',
   },
+  embedBlock: {
+    base: 'editor-embedBlock',
+    focus: 'editor-embedBlockFocus',
+  },
 };
-
 export default EditorTheme;

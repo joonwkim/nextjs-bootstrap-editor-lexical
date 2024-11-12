@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
-import { Layouts } from '../../data/toolbarData';
+import { Layouts } from '../data/toolbarData';
 
-const InsertColumnsLayoutModal = ({ onClick }: { onClick: (payload: { value: string }) => void, }) => {
+const ColumnsLayoutModal = ({ onClick }: { onClick: (payload: { value: string }) => void, }) => {
     const [selectedValue, setSelectedValue] = useState<string>('1fr 1fr')
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // alert(selected);
         onClick({ value: selectedValue })
     };
 
@@ -32,14 +31,6 @@ const InsertColumnsLayoutModal = ({ onClick }: { onClick: (payload: { value: str
                                         </option>
                                     ))}
                                 </select>
-                                {/* <select id='positionSelect' className="form-select" aria-label="Insert Columns Layout" value={selected} onChange={(e) => setSelected(e.target.value)}>
-                                    <option value="1">2 컬럼(동일한 폭)</option>
-                                    <option value="2"></option>
-                                    <option value="3"></option>
-                                    <option value="4"></option>
-                                    <option value="5"></option>
-                                    <option value="6">4 컬럼(20% - 40% - 20% - 20%)</option>
-                                </select> */}
                             </div>
                         </form>
                     </div>
@@ -56,4 +47,4 @@ const InsertColumnsLayoutModal = ({ onClick }: { onClick: (payload: { value: str
 
     )
 }
-export default InsertColumnsLayoutModal
+export default ColumnsLayoutModal

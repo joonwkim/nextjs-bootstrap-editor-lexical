@@ -209,7 +209,7 @@ export default function StickyComponent({ x, y, nodeKey, color, caption, }: { ca
               <ContentEditable
                 aria-placeholder="내용을 입력하세요"
                 className="stickyNode-editable"
-                placeholder={<div className="stickyNode-placeholder">노트 입력.</div>}
+                placeholder={<div className="stickyNode-placeholder">노트 입력하고 필요한 곳으로 옮기세요.</div>}
               />
             }
             ErrorBoundary={LexicalErrorBoundary}

@@ -8,7 +8,7 @@ import { $createNodeSelection, $getRoot, $getSelection, $insertNodes, $setSelect
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { InsertImagePayload } from '../plugins/ToolbarPlugin org';
 
-const InsertImageUrlModal = ({ onClick }: { onClick: (payload: InsertImagePayload) => void, }) => {
+const ImageUrlModal = ({ onClick }: { onClick: (payload: InsertImagePayload) => void, }) => {
 
     const [editor] = useLexicalComposerContext();
     const [formData, setFormData] = useState({ url: '', referrer: '' });
@@ -132,4 +132,4 @@ const InsertImageUrlModal = ({ onClick }: { onClick: (payload: InsertImagePayloa
     )
 }
 
-export default InsertImageUrlModal
+export default ImageUrlModal
