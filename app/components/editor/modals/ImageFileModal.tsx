@@ -23,18 +23,15 @@ const InsertImageFileModal = ({ onClick }: { onClick: (payload: InsertImagePaylo
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // alert('handleSubmit')
         if (file) {
             const src = URL.createObjectURL(file);
             const payload = { src: src, altText: altText, width: imageWidth, height: imageHeight, position: position }
-            console.log('payload:', payload)
             onClick(payload)
         }
         setFile(null)
         setAltText('');
         setImageWidth(undefined)
         setImageHeight(undefined)
-        // alert('handleSubmit')
     };
 
     const isButtonDisabled = !file;

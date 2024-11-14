@@ -17,7 +17,6 @@ const EmbedYoutubeModal = ({ onClick }: { onClick: (payload: { value: string }) 
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log(event);
         if (isValid && url) {
             const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|v\/|.+\?v=)|youtu\.be\/)([^&\n?#]+)/;
             const match = url.match(regex);

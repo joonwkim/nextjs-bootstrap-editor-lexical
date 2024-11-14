@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -10,7 +10,7 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import EditorTheme from './themes/editorTheme';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
-import { toolbarData } from './data/toolbarData';
+import { lexicalToolbarData, RichTextAction, toolbarData, ToolbarItem } from './data/toolbarData';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import ReadOnlyPlugin from './plugins/ReadOnlyPlugin';
 import { ListItemNode, ListNode, } from '@lexical/list';
@@ -32,23 +32,43 @@ import { LayoutItemNode } from './nodes/LayoutItemNode';
 import { StickyNode } from './nodes/StickyNode';
 import { YouTubeNode } from './nodes/YouTubeNode';
 import YouTubePlugin from './plugins/YouTubePlugin';
+import { CAN_USE_DOM } from '@lexical/utils';
+import FloatingLinkEditorPlugin from './plugins/FloatingLinkEditorPlugin';
+import { LinkNode } from '@lexical/link';
+import LinkPlugin from './plugins/LinkPlugin';
 
 const Editor = () => {
-    // const { settings: { tableCellMerge, tableCellBackgroundColor, }, } = useSettings();
-    // console.log('settings:', tableCellMerge, tableCellBackgroundColor)
     const [isReadOnly, setIsReadOnly] = useState(false);
-    //const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
-    // console.log('isLinkEditMode',isLinkEditMode)
-
+    const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
+    const [isSmallWidthViewport, setIsSmallWidthViewport] = useState<boolean>(false);
+    const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
     const placeholder = '내용을 기술하세요...';
+    const onRef = (_floatingAnchorElem: HTMLDivElement) => { if (_floatingAnchorElem !== null) { setFloatingAnchorElem(_floatingAnchorElem); } };
+
+    useEffect(() => {
+
+        const updateViewPortWidth = () => {
+            const isNextSmallWidthViewport = CAN_USE_DOM && window.matchMedia('(max-width: 1025px)').matches;
+
+            if (isNextSmallWidthViewport !== isSmallWidthViewport) {
+                setIsSmallWidthViewport(isNextSmallWidthViewport);
+            }
+        };
+
+        updateViewPortWidth();
+        window.addEventListener('resize', updateViewPortWidth);
+
+        return () => {
+            window.removeEventListener('resize', updateViewPortWidth);
+        };
+    }, [isSmallWidthViewport]);
 
     const editorConfig = {
         namespace: 'React.js Lexical',
         nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, HorizontalRuleNode, ImageNode, TableNode, TableRowNode, TableCellNode,
-            LayoutContainerNode, LayoutItemNode, StickyNode, YouTubeNode],
+            LayoutContainerNode, LayoutItemNode, StickyNode, YouTubeNode, LinkNode],
         editorState: null,
         onError(error: Error) {
-            console.log('error: ', error)
             throw error;
         },
         theme: EditorTheme,
@@ -59,48 +79,62 @@ const Editor = () => {
     };
 
     return (
-        <div className='editor-shell'>
+        <>
             <button onClick={toggleEditMode}>
                 {isReadOnly ? 'Switch to Edit Mode' : 'Switch to Read-Only'}
             </button>
-            <div className='editor-container tree-view'>
-                <LexicalComposer initialConfig={editorConfig}>
-                    <div className="editor-scroller">
-                        {!isReadOnly && <ToolbarPlugin lexicalToolbarData={toolbarData} isReadOnly={isReadOnly} setIsLinkEditMode={setIsReadOnly} />}
-                        <div className='editor' >
-                            <RichTextPlugin
-                                contentEditable={
-                                    <ContentEditable
-                                        className="editor-input"
-                                        aria-placeholder={placeholder}
-                                        placeholder={
-                                            <div className="editor-placeholder">{placeholder}</div>
-                                        }
-                                    />
-                                }
-                                ErrorBoundary={LexicalErrorBoundary}
-                            />
-                            <ReadOnlyPlugin isReadOnly={isReadOnly} />
-                            <HistoryPlugin />
-                            <AutoFocusPlugin />
-                            <ListPlugin />
-                            <CheckListPlugin />
-                            <HorizontalRulePlugin />
-                            <TablePlugin
-                                hasCellMerge={true}
-                                hasCellBackgroundColor={true}
-                            />
-                            <TableCellResizer />
-                            <TableHoverActionsPlugin />
-                            <LayoutPlugin />
-                            <YouTubePlugin />
-                            {/* <TreeViewPlugin /> */}
-                        </div>
-                    </div>
-                </LexicalComposer>
-            </div>
+            <div className='editor-shell'>
+                <div className='editor-container tree-view'>
+                    <LexicalComposer initialConfig={editorConfig}>
+                        <div className="editor-scroller">
+                            {!isReadOnly && <ToolbarPlugin lexicalToolbarData={toolbarData} isReadOnly={isReadOnly} setIsLinkEditMode={setIsLinkEditMode} />}
+                            <div className='editor' ref={onRef}>
+                                <RichTextPlugin
+                                    contentEditable={
+                                        <ContentEditable
+                                            className="editor-input"
+                                            aria-placeholder={placeholder}
+                                            placeholder={
+                                                <div className="editor-placeholder">{placeholder}</div>
+                                            }
+                                        />
+                                    }
+                                    ErrorBoundary={LexicalErrorBoundary}
+                                />
+                                <ReadOnlyPlugin isReadOnly={isReadOnly} />
+                                <HistoryPlugin />
+                                <AutoFocusPlugin />
+                                <LinkPlugin />
+                                <ListPlugin />
+                                <CheckListPlugin />
+                                <HorizontalRulePlugin />
+                                <TablePlugin
+                                    hasCellMerge={true}
+                                    hasCellBackgroundColor={true}
+                                />
+                                <TableCellResizer />
+                                <TableHoverActionsPlugin />
+                                <LayoutPlugin />
+                                <YouTubePlugin />
 
-        </div>
+                                {floatingAnchorElem && !isSmallWidthViewport && (<>
+
+                                    <FloatingLinkEditorPlugin
+                                        anchorElem={floatingAnchorElem}
+                                        isLinkEditMode={isLinkEditMode}
+                                        setIsLinkEditMode={setIsLinkEditMode}
+                                    />
+
+                                </>)}
+                                <TreeViewPlugin />
+                            </div>
+                        </div>
+                    </LexicalComposer>
+                </div>
+
+            </div>
+        </>
+
 
     );
 }

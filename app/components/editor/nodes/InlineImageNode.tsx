@@ -93,7 +93,6 @@ export class InlineImageNode extends DecoratorNode<JSX.Element> {
     element.setAttribute('alt', this.__altText);
     element.setAttribute('width', this.__width ? this.__width.toString() : '');
     element.setAttribute('height', this.__height ? this.__height.toString() : '');
-    console.log('element: ', element)
     return { element };
   }
 
@@ -205,7 +204,6 @@ export class InlineImageNode extends DecoratorNode<JSX.Element> {
 }
 
 export function $createInlineImageNode({ altText, position, height, src, maxWidth, width, showCaption, caption, captionsEnabled, key, }: InlineImagePayload): InlineImageNode {
-  console.log('width', width)
   return $applyNodeReplacement(
     new InlineImageNode(src, altText, position, maxWidth, width, height, showCaption, caption, captionsEnabled, key,),
   );

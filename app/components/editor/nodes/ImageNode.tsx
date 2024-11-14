@@ -105,7 +105,6 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     }
 
     setShowCaption(showCaption: boolean): void {
-        console.log('setShowCaption')
         const writable = this.getWritable();
         writable.__showCaption = showCaption;
     }
@@ -125,13 +124,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     }
 
     createDOM(config: EditorConfig): HTMLElement {
-        console.log('altText: ', this.__altText)
-        console.log('position: ', this.__position)
-        console.log('showCaption: ', this.__showCaption)
-        console.log('width: ', this.__width)
-
         if (this.__position && this.__width) {
-            console.log('for inline image')
             const span = document.createElement('span');
             const theme = config.theme;
             const className = `${theme.image} position-${this.__position}`;
@@ -162,7 +155,6 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
         element.setAttribute('alt', this.__altText);
         element.setAttribute('width', this.__width ? this.__width.toString() : '');
         element.setAttribute('height', this.__height ? this.__height.toString() : '');
-        console.log('element: ', element)
         return { element };
     }
 

@@ -128,15 +128,12 @@ function TableHoverActionsContainer({ anchorElem, }: { anchorElem: HTMLElement; 
                 TableNode,
                 (mutations) => {
                     editor.getEditorState().read(() => {
-                        // console.log('mutations: ', mutations)
                         mutations.forEach((mutation, nodeKey) => {
                             if (mutation === 'created') {
-                                console.log(`mutation created TableNode with key ${nodeKey} was added`);
                                 codeSetRef.current.add(nodeKey);
                                 setShouldListenMouseMove(codeSetRef.current.size > 0);
                                 // Additional logic when a tableNode is created
                             } else if (mutation === 'updated') {
-                                console.log(`mutation updated TableNode with key ${nodeKey} was updated`);
                                 // Additional logic when a tableNode is updated
                             } else if (mutation === 'destroyed') {
                                 console.log(`mutaion destroyed TableNode with key ${nodeKey} was removed`);
@@ -153,7 +150,6 @@ function TableHoverActionsContainer({ anchorElem, }: { anchorElem: HTMLElement; 
     }, [editor]);
 
     const insertAction = (insertRow: boolean) => {
-        console.log('position: ', position.height)
         editor.update(() => {
             if (tableDOMNodeRef.current) {
                 const maybeTableNode = $getNearestNodeFromDOMNode(
@@ -170,11 +166,6 @@ function TableHoverActionsContainer({ anchorElem, }: { anchorElem: HTMLElement; 
             }
         });
     };
-
-    console.log('position: ', position)
-
-
-
     return (
         <>
             {isShownRow && (
@@ -198,14 +189,12 @@ function TableHoverActionsContainer({ anchorElem, }: { anchorElem: HTMLElement; 
                     left={position.left}
                     width={position.width}
                 />
-            )}          
+            )}
         </>
     );
 }
 
-function getMouseInfo(event: MouseEvent): {
-    tableDOMNode: HTMLElement | null; isOutside: boolean;
-} {
+function getMouseInfo(event: MouseEvent): { tableDOMNode: HTMLElement | null; isOutside: boolean; } {
     const target = event.target;
 
     if (target && target instanceof HTMLElement) {

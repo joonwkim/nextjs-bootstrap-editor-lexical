@@ -340,7 +340,6 @@ export const TableCellResizer = ({ editor }: { editor: LexicalEditor }) => {
                 },
             };
 
-            // console.log('resizer styles: ', JSON.stringify(styles,null,2))
             const tableRect = tableRectRef.current;
 
             if (draggingDirection && mouseCurrentPos && tableRect) {

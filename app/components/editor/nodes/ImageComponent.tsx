@@ -44,10 +44,6 @@ function LazyImage({ altText, className, imageRef, width, height, src, onError }
             }
 
         }
-        // if (imageRef.current && width) {
-        //     imageRef.current.style.setProperty('--auto-height-maxwidth', width.toString() + 'px');
-        //     console.log('--auto-height-maxwidth')
-        // }
     }, [height, width])
 
     return (<>
@@ -204,7 +200,6 @@ const ImageComponent = ({ src, altText, nodeKey, width, height, maxWidth, resiza
     );
 
     const onClick = useCallback((payload: MouseEvent) => {
-        // console.log('payload onClick MouseEvent: ', payload)
         const event = payload;
         if (isResizing) {
             return true;

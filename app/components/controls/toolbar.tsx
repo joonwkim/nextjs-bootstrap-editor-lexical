@@ -31,12 +31,11 @@ const Toolbar = ({ toolbarData, canUndo, canRedo, selectedItem, handleToolbarSel
         }
     }
 
-    const getActive = (item: ToolbarItem) => {
-        if (item.id === RichTextAction.Undo && !canRedo) { return true }
-        else if (item.id === RichTextAction.Redo && !canUndo) { return true }
-        else {
-            return false;
-        }
+    const getClassName = (item: ToolbarItem) => {
+        if (item.active === true) {
+            return 'btn btn-outline-secondary border-0 active'
+        }       
+        return 'btn btn-outline-secondary border-0'
     }
     return (
         <div className='btn-toolbar' role='group' aria-label='Toolbar with button groups'>
@@ -55,11 +54,10 @@ const Toolbar = ({ toolbarData, canUndo, canRedo, selectedItem, handleToolbarSel
                                 <InsertInlineImageModal />
                                 <InsertColumnsLayoutModal /> */}
                             </>) : (
-                                <button className={`btn btn-outline-secondary border-0 ${getActive(item)}`} title={item.title} data-bs-toggle="button" disabled={getDisabled(item)}
-                                    onClick={() => handleToolbarSelect(item)}>
-                                    <i className={item.icon}></i>
-                                </button>
-                            )
+                                    <button className={getClassName(item)} title={item.title} data-bs-toggle="button" disabled={getDisabled(item)}
+                                        onClick={() => handleToolbarSelect(item)}>
+                                        <i className={item.icon}></i>
+                                    </button>)
                         )
                     )}
                 </div>
